@@ -1,0 +1,52 @@
+[package]
+name = "topiary-core"
+description = "Formats input source code in a style defined for that language."
+categories = ["development-tools", "text-processing"]
+keywords = ["code-formatter", "formatter", "text", "tree-sitter"]
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+homepage.workspace = true
+repository.workspace = true
+documentation.workspace = true
+readme.workspace = true
+license.workspace = true
+
+[features]
+default = [ "log" ]
+log = [ "dep:log" ]
+
+[dependencies]
+log = { workspace = true, optional = true }
+miette = { workspace = true }
+pretty_assertions = { workspace = true }
+prettydiff = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+streaming-iterator = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt"] }
+topiary-tree-sitter-facade = { workspace = true }
+tree-sitter = { workspace = true }
+rayon = { workspace = true }
+thiserror = { workspace = true }
+rootcause = { workspace = true }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+topiary-web-tree-sitter-sys.workspace = true
+
+[dev-dependencies]
+log = { workspace = true }
+criterion = { workspace = true, features = ["async_futures"] }
+env_logger = { workspace = true }
+test-log = { workspace = true }
+tokio-test = { workspace = true }
+topiary-config = { workspace = true, features = ["json", "nickel", "ocaml", "ocamllex", "rust"] }
+topiary-queries = { workspace = true, features = ["json", "nickel", "ocaml", "ocamllex", "rust"] }
+
+[[bench]]
+name = "benchmark"
+harness = false
+
+[[bench]]
+name = "injections"
+harness = false

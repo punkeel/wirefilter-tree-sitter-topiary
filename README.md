@@ -1,68 +1,88 @@
-# Wirefilter: Tree-sitter grammar + Topiary formatter
+# Wirefilter playground, Tree-sitter grammar, and Topiary formatter
 
-A syntax-oriented Tree-sitter grammar and Topiary formatting query for
-[Cloudflare Wirefilter](https://github.com/cloudflare/wirefilter). The grammar
-is based on the upstream Rust lexers under `engine/src/ast`, `engine/src/types.rs`,
-`engine/src/rhs_types`, and `engine/src/scheme.rs` (reviewed October 2026).
+A syntax-oriented parser and formatter for [Cloudflare Wirefilter](https://github.com/cloudflare/wirefilter), with a browser playground for highlighting, syntax diagnostics, tree inspection, and formatting. The demo runs the real Tree-sitter and Topiary engines locally in WebAssembly; expressions are not sent to a formatting server.
 
-## Files
+## Develop and test
 
-- `tree-sitter-wirefilter/grammar.js`: grammar for Wirefilter expressions
-- `tree-sitter-wirefilter/src/scanner.c`: hash-balanced raw strings (`r#"..."#`)
-- `tree-sitter-wirefilter/queries/highlights.scm`: editor highlighting
-- `topiary/languages.ncl`: local Topiary language registration
-- `topiary/queries/formatting.scm`: whitespace and line-break policy
-- `fixtures/*.wirefilter`: syntax samples to exercise the main operators
-- `scripts/build.sh`: build the Tree-sitter shared library
-- `scripts/smoke.sh`: parse and idempotence smoke test
+Requirements: Node.js 22.12+ (or 20.19+), a C compiler, and Rust/Cargo. Install the pinned tools:
 
-## Setup (Linux)
+```sh
+npm ci --prefix tree-sitter-wirefilter
+cargo install topiary-cli --version 0.8.0 --locked
+npm test
+```
 
-Install `tree-sitter` (CLI) and `topiary` separately, then from this folder run:
+`npm test` regenerates and builds the parser, runs the Tree-sitter corpus, parses the example fixtures, and checks formatter goldens, idempotence, and preservation of tree structure and leaf tokens. Generated parser sources are committed; binaries and build caches are ignored. The grammar uses ABI 14 for compatibility with the pinned browser runtime.
+
+Format an expression:
 
 ```sh
 ./scripts/build.sh
 printf 'http.request.method eq "GET" and ip.src in {192.0.2.0/24 10.0.0.1}' \
-  | topiary -C topiary/languages.ncl format --language wirefilter
-
-# Or format .wirefilter files in place:
-topiary -C topiary/languages.ncl format fixtures/examples.wirefilter
-
-# Optional regression / idempotence checks:
-./scripts/smoke.sh
+  | ./scripts/format.sh
 ```
 
-`topiary/languages.ncl` points to `tree-sitter-wirefilter/wirefilter.so` relative
-to the config file, **not** the current directory. On macOS, build a dylib and
-change that path to `.dylib`; Windows requires a `.dll`.
+For checked formatting of a file, run `./scripts/format.sh file.wirefilter` (writes stdout). The wrapper checks both ERROR and MISSING nodes before calling Topiary: Topiary 0.8 alone can accept incomplete trees with missing delimiters.
 
-If adapting to a published Tree-sitter grammar repository, you can replace
-`grammar.source.path` with a pinned `grammar.source.git` configuration and avoid
-building locally.
+For known-valid files, native Topiary can also format in place:
 
-## Intended syntax
+```sh
+topiary -C topiary/languages.ncl format fixtures/examples.wirefilter
+```
 
-- Logical operators `and`/`&&`, `xor`/`^^`, `or`/`||` and `not`/`!`
-- Comparisons `eq`/`==`, `ne`/`!=`, `gt`/`>`, `ge`/`>=`, `lt`/`<`, `le`/`<=`
-- `contains`, `matches`/`~`, `wildcard`, `strict wildcard`, `in`, `&`/`bitwise_and`
-- Bare boolean fields, functions, `any(...)` and `all(...)`
-- Map indexing (`["key"]`), array indexing (`[0]`), and map-each (`[*]`)
-- Whitespace-separated `in { ... }` sets, `in $list_name`, integer/IP ranges
-- Decimal, hex and octal integers, IP/CIDR, byte strings, quoted and raw strings
+The local Topiary registration resolves the shared library relative to `topiary/languages.ncl`. The build script targets Linux (`wirefilter.so`); macOS/Windows need the platform library suffix and a corresponding configuration change.
 
-**Important:** This is a syntactic parser, **not** a replacement for Wirefilter's
-schema-dependent Rust parser. It does not validate identifiers, operator/field
-types, function arity, IP validity, integer overflow, regex compatibility,
-or the `Array(Bool)` requirement for quantifiers. For instance, a generic
-reference can parse as a field or a call; only the Wirefilter `Scheme` can
-resolve it. Colon-separated hex byte strings can be lexically ambiguous with
-some IPv6 forms. Wirefilter does not accept comments, commas inside literal
-sets, or tabs as whitespace; this grammar intentionally omits them.
+## Browser demo
 
-## Validation status
+The browser uses the repository's grammar, highlighting query, and formatting query. Topiary 0.8.0 is compiled to WebAssembly with small, documented compatibility patches in `demo/formatter/vendor/`. Native and browser output are compared against the same golden files. The formatter retains source multiline structure; it does not implement line-width-driven wrapping.
 
-JavaScript syntax, grammar-rule references, token-regex spot checks, and
-the raw-string scanner (including runtime unit tests) have been checked. The **Tree-sitter parser generation and full Topiary
-format run have not been executed** in the authoring environment because the
-required CLI executables were unavailable. Run `./scripts/smoke.sh` after
-installing both tools before using this formatter on production expressions.
+Building both WASM modules requires Docker, the Rust WASM target, and a matching wasm-bindgen CLI:
+
+```sh
+npm ci --prefix demo
+rustup target add wasm32-unknown-unknown
+cargo install wasm-bindgen-cli --version 0.2.126 --locked
+npm run demo:build
+npm run demo:test  # first: cd demo && npx playwright install chromium
+npm --prefix demo run dev
+```
+
+The build uses the pinned `emscripten/emsdk:4.0.15` image. After a WASM build, frontend-only edits need only `npm --prefix demo run build`. Rebuild WASM after grammar, scanner, or Rust changes. Formatting-query and highlighting-query edits are picked up by Vite directly.
+
+The demo includes samples, live syntax errors with line/column locations, a tree with field labels and operators, keyboard formatting (`Ctrl/⌘ + Shift + F`), and copying of output. Syntax errors prevent formatting. Input is limited to 20,000 characters; the tree display is bounded for deeply nested expressions.
+
+## Workers hosting
+
+`.openai/hosting.json` records the Sites deployment, which serves `demo/dist` on Cloudflare Workers. The same static output can be deployed to your own Cloudflare account using `demo/wrangler.jsonc`:
+
+```sh
+npm run demo:build
+cd demo
+npx wrangler deploy
+```
+
+No service secrets, database, or backend formatter are required.
+
+## Syntax and limits
+
+The grammar follows the upstream Rust lexers and AST parsers under `engine/src/ast`, `engine/src/types.rs`, `engine/src/rhs_types`, and `engine/src/scheme.rs`. It supports:
+
+- Logical operators `and`/`&&`, `xor`/`^^`, `or`/`||`, and `not`/`!`, with upstream precedence.
+- Comparison operators, `contains`, regex matching, wildcards, membership, and bitwise tests.
+- Fields, function calls, `any(...)`/`all(...)`, indexes and `[*]`.
+- Whitespace-separated sets, named lists, integer/IP ranges, IP/CIDR, integers, and byte strings.
+- Quoted strings and hash-balanced raw strings without rewriting literal contents.
+
+This is a **syntax parser**, not Wirefilter's schema-dependent Rust validator. It does not resolve field names or check types, function arity, integer overflow, valid IP addresses, regex compatibility, or the `Array(Bool)` requirement for quantifiers. Colon-separated bytes and some IPv6 forms are lexically ambiguous without type information. Some forms accepted by this grammar require rejection by Wirefilter's `Scheme`; do not use a green syntax status as a security-policy validation result.
+
+Wirefilter has no comments, no commas in literal sets, and no tab whitespace. Tabs inside string contents are preserved. Tree-sitter trees are concrete syntax trees rather than the typed AST produced by Wirefilter.
+
+## Repository map
+
+- `AGENTS.md`: contributor/agent instructions and validation expectations.
+- `tree-sitter-wirefilter/`: grammar, scanner, generated parser, highlight query, and corpus.
+- `topiary/`: local registration and formatting policy.
+- `fixtures/`: representative expressions.
+- `tests/`: exact formatting inputs and expected output.
+- `scripts/`: build and native test entry points.
+- `demo/`: browser UI, WASM bindings, browser tests, and Workers configuration.
