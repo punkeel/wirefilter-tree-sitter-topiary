@@ -41,6 +41,6 @@ The library entry point is `wirefilter_format::format(source)`. Formatting prese
 
 Run `npm test` for parser, formatter, scanner, and conformance regressions. See [development](docs/development.md) and [contributing](CONTRIBUTING.md).
 
-The optional [browser demo](demo/) exercises highlighting, syntax diagnostics, tree inspection, and editable formatting rules. [Try it online](https://wirefilter-playground.punkeel.workers.dev).
+The optional [browser demo](demo/) pairs a highlighted editor with automatically formatted, highlighted output. It includes syntax diagnostics, tree inspection, and editable formatting rules. [Try it online](https://wirefilter-playground.punkeel.workers.dev).
 
 [MIT](LICENSE). Packages are currently used from this repository, not published to package registries.

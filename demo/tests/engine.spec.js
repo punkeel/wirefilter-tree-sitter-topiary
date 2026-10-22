@@ -194,3 +194,46 @@ for (const file of readdirSync(fixtureDir).filter(file => file.endsWith('.input.
     expect((await page.evaluate(input => window.engine.analyze(input), output)).diagnostics).toEqual([]);
   });
 }
+
+test('keeps malformed quoted literals whole without accepting unsupported syntax', async ({ page }) => {
+  await enginePage(page);
+  const malformed = [
+    "foo in ['0::d,e,f']",
+    "foo in ['0::d,e,f', 'a\\'b']",
+    'foo eq "bad\\q 0::d,e,f"',
+    "foo in ['<img src=x onerror=alert(1)>']",
+    "foo in ['unfinished 0::d,e,f",
+  ];
+  for (const source of malformed) {
+    const result = await page.evaluate(source => {
+      const analysis = window.engine.analyze(source);
+      const preview = document.createElement('div');
+      preview.innerHTML = analysis.html;
+      return {
+        diagnostics: analysis.diagnostics,
+        text: preview.textContent,
+        strings: [...preview.querySelectorAll('.token-string')].map(node => node.textContent),
+        numbers: preview.querySelectorAll('.token-number').length,
+        images: preview.querySelectorAll('img').length,
+      };
+    }, source);
+    expect(result.text).toBe(source);
+    expect(result.strings.join(' ')).toContain(source.includes('0::d') ? '0::d,e,f' : '<img');
+    expect(result.diagnostics.length).toBeGreaterThan(0);
+    expect(result.numbers).toBe(0);
+    expect(result.images).toBe(0);
+    await expect(page.evaluate(source => window.engine.format(source), source)).rejects.toThrow();
+  }
+  const valid = 'foo in {"0::d,e,f"}';
+  const result = await page.evaluate(source => window.engine.analyze(source), valid);
+  expect(result.diagnostics).toEqual([]);
+  expect(result.html).toContain('<span class="token-string">&quot;0::d,e,f&quot;</span>');
+  expect(await page.evaluate(source => window.engine.format(source), valid)).toBe('foo in { "0::d,e,f" }\n');
+
+  // Apostrophes inside valid strings remain opaque even with an error elsewhere.
+  const mixed = `foo eq "don't split 0::d,e,f" and foo eq r#"'raw' 0::d,e,f"# and`;
+  const recovered = await page.evaluate(source => window.engine.analyze(source), mixed);
+  expect(recovered.diagnostics.length).toBeGreaterThan(0);
+  expect(recovered.html.match(/token-string/g)).toHaveLength(2);
+  expect(recovered.html).not.toContain('token-number');
+});

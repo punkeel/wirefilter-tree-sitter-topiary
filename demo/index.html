@@ -7,214 +7,94 @@
     <title>Wirefilter playground</title>
   </head>
   <body>
-    <div class="app-shell">
+    <main class="workspace">
       <header class="topbar">
-        <a class="brand" href="./" aria-label="Wirefilter playground home">
-          <span class="brand-mark" aria-hidden="true">wf</span>
-          <span class="brand-name">wirefilter<span class="brand-slash">/</span>playground</span>
-        </a>
-        <div class="topbar-meta">
-          <span class="engine-label">Tree-sitter + Topiary</span>
-          <span class="runtime-status is-loading" id="runtime-status" role="status">
-            <span class="status-dot" aria-hidden="true"></span>
-            <span id="runtime-status-text">Starting parser</span>
-          </span>
+        <div>
+          <h1>Wirefilter playground</h1>
+          <p>Write an expression. See it formatted as you type.</p>
         </div>
+        <span class="runtime-status is-loading" id="runtime-status" role="status">
+          <span id="runtime-status-text">Starting parser</span>
+        </span>
       </header>
 
-      <main>
-        <section class="intro" aria-labelledby="page-title">
-          <div class="eyebrow"><span class="eyebrow-rule" aria-hidden="true"></span>Developer playground</div>
-          <h1 id="page-title">Make Wirefilter <em>readable.</em></h1>
-          <p class="intro-copy">
-            Explore syntax highlighting, parser diagnostics, concrete syntax trees,
-            and real Topiary formatting in one small, focused workspace.
-          </p>
-          <div class="capability-list" aria-label="Playground capabilities">
-            <span class="capability"><span aria-hidden="true">01</span>Live syntax analysis</span>
-            <span class="capability"><span aria-hidden="true">02</span>Tree inspection</span>
-            <span class="capability"><span aria-hidden="true">03</span>Topiary formatting</span>
+      <div class="toolbar">
+        <label for="sample-select">Example</label>
+        <select id="sample-select" aria-label="Choose a Wirefilter sample">
+          <option value="method-and-ip">GET + IP set</option>
+          <option value="operators">Operators + list</option>
+          <option value="quantifiers">Quantifiers + indexes</option>
+          <option value="ranges">Ranges + raw string</option>
+          <option value="invalid">Invalid expression</option>
+        </select>
+        <button id="reset-button" type="button">Reset</button>
+      </div>
+
+      <section class="panel" data-stage="input" aria-labelledby="input-title">
+        <div class="panel-heading">
+          <h2 id="input-title">Input</h2>
+          <span id="cursor-position">Ln 1, Col 1</span>
+        </div>
+        <div class="source-frame">
+          <pre id="line-numbers" class="line-numbers" aria-hidden="true">1</pre>
+          <div class="code-editor">
+            <pre id="syntax-layer" class="syntax-layer" aria-hidden="true"><code id="highlight-code"></code></pre>
+            <textarea id="source-input" aria-label="Wirefilter expression" aria-describedby="editor-help"
+              autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" wrap="off"></textarea>
           </div>
-        </section>
+        </div>
+        <div class="panel-footer" id="editor-help">Highlighted and formatted as you type.</div>
+      </section>
 
-        <section class="playground" aria-labelledby="workspace-title">
-          <div class="workspace-heading">
-            <div>
-              <p class="section-kicker">Expression workspace</p>
-              <h2 id="workspace-title">Write, inspect, format</h2>
-            </div>
-            <div class="workspace-actions">
-              <label class="sample-picker">
-                <span class="sr-only">Choose a Wirefilter sample</span>
-                <select id="sample-select" aria-label="Choose a Wirefilter sample">
-                  <option value="method-and-ip">GET + IP set</option>
-                  <option value="operators">Operators + list</option>
-                  <option value="quantifiers">Quantifiers + indexes</option>
-                  <option value="ranges">Ranges + raw string</option>
-                  <optgroup label="Diagnostics">
-                    <option value="invalid">Invalid expression</option>
-                  </optgroup>
-                </select>
-              </label>
-              <button class="button button-quiet" id="reset-button" type="button">Reset</button>
-              <button class="button button-primary" id="format-button" type="button" aria-keyshortcuts="Control+Shift+F Meta+Shift+F">
-                <span class="button-icon" aria-hidden="true">↗</span>
-                Format
-                <span class="shortcut" aria-hidden="true">⌘⇧F</span>
-              </button>
-            </div>
+      <section class="panel output-panel" data-stage="format" aria-labelledby="output-title">
+        <div class="panel-heading">
+          <h2 id="output-title">Formatted</h2>
+          <button class="copy-button" id="copy-output-button" type="button" data-copy-target="formatted-highlight-code"
+            aria-label="Copy formatted output" disabled>Copy</button>
+        </div>
+        <pre class="highlight-output" tabindex="0" aria-label="Formatted Wirefilter output"><code id="formatted-highlight-code"></code></pre>
+        <div class="panel-footer">
+          <span id="format-status">Waiting for parser</span>
+          <span id="copy-feedback" aria-live="polite"></span>
+        </div>
+      </section>
+
+      <section id="diagnostics-panel" class="diagnostics" aria-label="Syntax diagnostics">
+        <span id="diagnostic-count">Waiting for parser</span>
+        <span id="diagnostic-empty">Syntax only; field names and types are checked by Wirefilter.</span>
+        <ol id="diagnostic-list"></ol>
+      </section>
+
+      <details class="panel" id="syntax-tree">
+        <summary>Syntax tree</summary>
+        <div class="details-body">
+          <button class="copy-button" type="button" data-copy-target="ast-output" aria-label="Copy syntax tree">Copy tree</button>
+          <pre id="ast-output" tabindex="0">Waiting for parser…</pre>
+        </div>
+      </details>
+
+      <details class="panel" id="formatter-settings">
+        <summary>Formatter rules</summary>
+        <div class="details-body">
+          <p id="formatter-settings-help">Edit the Topiary query or indentation to reformat immediately. The grammar stays fixed.</p>
+          <label for="formatting-query">Topiary query</label>
+          <textarea id="formatting-query" aria-label="Topiary formatting query" aria-describedby="formatter-settings-help rules-error"
+            autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" rows="10"></textarea>
+          <div class="toolbar">
+            <label for="indent-size">Indentation</label>
+            <select id="indent-size" aria-label="Formatter indentation size">
+              <option value="2">2 spaces</option>
+              <option value="4">4 spaces</option>
+              <option value="8">8 spaces</option>
+            </select>
+            <button id="reset-rules-button" type="button">Reset rules</button>
           </div>
-
-          <div class="workbench">
-            <article class="editor-card card-surface" aria-labelledby="editor-title">
-              <div class="card-heading">
-                <div>
-                  <div class="card-label"><span class="label-dot" aria-hidden="true"></span>Input</div>
-                  <h3 id="editor-title">Wirefilter expression</h3>
-                </div>
-                <span class="syntax-badge">.wirefilter</span>
-              </div>
-
-              <div class="code-frame" id="code-frame">
-                <pre class="line-numbers" id="line-numbers" aria-hidden="true">1</pre>
-                <div class="code-scroll" id="code-scroll">
-                  <pre class="syntax-layer" id="syntax-layer" aria-hidden="true"><code id="highlight-code"></code></pre>
-                  <textarea
-                    id="source-input"
-                    class="editor-input"
-                    aria-label="Wirefilter expression input"
-                    aria-describedby="editor-help"
-                    autocapitalize="off"
-                    autocomplete="off"
-                    autocorrect="off"
-                    spellcheck="false"
-                    wrap="off"
-                    rows="14"
-                  ></textarea>
-                </div>
-              </div>
-
-              <div class="editor-footer">
-                <span id="editor-help">Syntax is analyzed as you type.</span>
-                <span id="cursor-position">Ln 1, Col 1</span>
-              </div>
-
-              <section class="diagnostics" id="diagnostics-panel" aria-labelledby="diagnostics-title">
-                <div class="subpanel-heading">
-                  <h4 id="diagnostics-title">Diagnostics</h4>
-                  <span class="diagnostic-count" id="diagnostic-count">Waiting for parser</span>
-                </div>
-                <div class="diagnostic-empty" id="diagnostic-empty">
-                  <span class="empty-icon" aria-hidden="true">✓</span>
-                  <span>No syntax issues found.</span>
-                </div>
-                <ol class="diagnostic-list" id="diagnostic-list"></ol>
-              </section>
-            </article>
-
-            <aside class="inspector" aria-label="Wirefilter inspection panels">
-              <section class="inspector-card card-surface" aria-labelledby="ast-title">
-                <div class="card-heading compact-heading">
-                  <div>
-                    <div class="card-label"><span class="label-dot label-dot-blue" aria-hidden="true"></span>Structure</div>
-                    <h3 id="ast-title">Syntax tree</h3>
-                  </div>
-                  <button class="icon-button copy-button" type="button" data-copy-target="ast-output" aria-label="Copy syntax tree" title="Copy syntax tree">
-                    <span aria-hidden="true">⧉</span>
-                    <span class="sr-only">Copy syntax tree</span>
-                  </button>
-                </div>
-                <pre class="ast-output" id="ast-output" tabindex="0" aria-live="polite">Waiting for parser…</pre>
-              </section>
-
-              <section class="inspector-card card-surface" aria-labelledby="output-title">
-                <div class="card-heading compact-heading">
-                  <div>
-                    <div class="card-label"><span class="label-dot label-dot-orange" aria-hidden="true"></span>Formatter output</div>
-                    <h3 id="output-title">Topiary result</h3>
-                  </div>
-                  <button class="icon-button copy-button" id="copy-output-button" type="button" data-copy-target="formatted-output" aria-label="Copy formatted output" title="Copy formatted output" disabled>
-                    <span aria-hidden="true">⧉</span>
-                    <span class="sr-only">Copy formatted output</span>
-                  </button>
-                </div>
-                <textarea class="formatted-output" id="formatted-output" aria-label="Formatted Wirefilter output" readonly placeholder="Press Format to run Topiary."></textarea>
-                <div class="output-footer">
-                  <span id="format-status">Not run yet</span>
-                  <span class="copy-feedback" id="copy-feedback" aria-live="polite"></span>
-                  <span class="output-engine">actual formatter</span>
-                </div>
-              </section>
-
-              <details class="formatter-settings card-surface" id="formatter-settings" open>
-                <summary>
-                  <span class="formatter-summary-copy">
-                    <span class="card-label"><span class="label-dot label-dot-orange" aria-hidden="true"></span>Advanced</span>
-                    <span class="formatter-settings-title">Formatter rules</span>
-                  </span>
-                  <span class="formatter-summary-state">Topiary configuration</span>
-                </summary>
-                <div class="formatter-settings-body">
-                  <p class="formatter-settings-copy" id="formatter-settings-help">
-                    The Wirefilter grammar is fixed. Edit the Topiary formatting rules and indentation here;
-                    these settings change presentation only, not which expressions the parser accepts.
-                  </p>
-                  <div class="formatter-fields">
-                    <div class="formatter-field formatter-query-field">
-                      <label for="formatting-query">Topiary query</label>
-                      <textarea
-                        id="formatting-query"
-                        class="formatting-query"
-                        aria-label="Topiary formatting query"
-                        aria-describedby="formatter-settings-help formatting-query-help rules-error"
-                        autocapitalize="off"
-                        autocomplete="off"
-                        autocorrect="off"
-                        spellcheck="false"
-                        rows="8"
-                      ></textarea>
-                      <span class="field-help" id="formatting-query-help">Edit rules, then press Format. Change the boolean operator’s @prepend_hardline to @prepend_space to keep a chain on one line.</span>
-                    </div>
-                    <div class="formatter-field indent-field">
-                      <label for="indent-size">Indentation</label>
-                      <select id="indent-size" aria-label="Formatter indentation size" aria-describedby="formatter-settings-help indentation-help">
-                        <option value="2">2 spaces</option>
-                        <option value="4">4 spaces</option>
-                        <option value="8">8 spaces</option>
-                      </select>
-                      <span class="field-help" id="indentation-help">Spaces per level. Tabs are not supported by Wirefilter.</span>
-                    </div>
-                  </div>
-                  <div class="formatter-actions">
-                    <button class="button button-quiet" id="reset-rules-button" type="button">Reset rules</button>
-                    <p class="rules-error" id="rules-error" role="alert" hidden></p>
-                  </div>
-                </div>
-              </details>
-
-              <section class="scope-note" aria-labelledby="scope-title">
-                <div class="scope-icon" aria-hidden="true">!</div>
-                <div>
-                  <h3 id="scope-title">Syntax scope</h3>
-                  <p>
-                    This playground checks syntax only. Scheme-dependent type validation—field resolution,
-                    types, function arity, and value ranges—belongs to Wirefilter’s Rust Scheme.
-                  </p>
-                </div>
-              </section>
-            </aside>
-          </div>
-
-          <div class="workspace-footer">
-            <span><span class="footer-spark" aria-hidden="true">✦</span> Parser status is kept local to this demo.</span>
-            <span>Wirefilter syntax · no remote assets</span>
-          </div>
-        </section>
-      </main>
-
+          <p id="rules-error" role="alert" hidden></p>
+        </div>
+      </details>
+      <footer>Tree-sitter + Topiary · Runs locally in your browser</footer>
       <div class="sr-only" id="announcer" role="status" aria-live="polite" aria-atomic="true"></div>
-    </div>
-
+    </main>
     <script type="module" src="./src/app.js"></script>
   </body>
 </html>

@@ -34,11 +34,9 @@ const elements = {
   runtimeStatusText: document.querySelector('#runtime-status-text'),
   sampleSelect: document.querySelector('#sample-select'),
   resetButton: document.querySelector('#reset-button'),
-  formatButton: document.querySelector('#format-button'),
   sourceInput: document.querySelector('#source-input'),
-  codeScroll: document.querySelector('#code-scroll'),
-  syntaxLayer: document.querySelector('#syntax-layer'),
   highlightCode: document.querySelector('#highlight-code'),
+  syntaxLayer: document.querySelector('#syntax-layer'),
   lineNumbers: document.querySelector('#line-numbers'),
   cursorPosition: document.querySelector('#cursor-position'),
   editorHelp: document.querySelector('#editor-help'),
@@ -47,7 +45,7 @@ const elements = {
   diagnosticEmpty: document.querySelector('#diagnostic-empty'),
   diagnosticList: document.querySelector('#diagnostic-list'),
   astOutput: document.querySelector('#ast-output'),
-  formattedOutput: document.querySelector('#formatted-output'),
+  formattedHighlightCode: document.querySelector('#formatted-highlight-code'),
   copyOutputButton: document.querySelector('#copy-output-button'),
   formatStatus: document.querySelector('#format-status'),
   copyFeedback: document.querySelector('#copy-feedback'),
@@ -98,10 +96,10 @@ function updateCursorPosition() {
 }
 
 function syncEditorScroll() {
-  const { sourceInput, syntaxLayer, lineNumbers } = elements;
-  syntaxLayer.scrollTop = sourceInput.scrollTop;
-  syntaxLayer.scrollLeft = sourceInput.scrollLeft;
+  const { sourceInput, lineNumbers } = elements;
   lineNumbers.scrollTop = sourceInput.scrollTop;
+  elements.syntaxLayer.scrollTop = sourceInput.scrollTop;
+  elements.syntaxLayer.scrollLeft = sourceInput.scrollLeft;
 }
 
 function formatLocation(diagnostic) {
@@ -169,8 +167,8 @@ function renderAnalysis(result) {
   elements.astOutput.textContent = typeof result?.ast === 'string' && result.ast ? result.ast : '(no syntax tree returned)';
   renderDiagnostics(result?.diagnostics);
   elements.editorHelp.textContent = (result?.diagnostics?.length || 0) > 0
-    ? 'Fix the syntax issue before running Topiary.'
-    : 'Syntax is analyzed as you type.';
+    ? 'Formatting resumes when syntax issues are fixed.'
+    : 'Highlighted and formatted as you type.';
   updateLineNumbers(elements.sourceInput.value);
   updateCursorPosition();
 }
@@ -203,7 +201,10 @@ function clearCopyFeedback() {
 }
 
 function analyzeSource() {
-  if (!parserReady) return;
+  if (!parserReady) {
+    elements.highlightCode.textContent = elements.sourceInput.value;
+    return;
+  }
   try {
     renderAnalysis(analyze(elements.sourceInput.value));
   } catch (error) {
@@ -211,30 +212,26 @@ function analyzeSource() {
   }
 }
 
-function clearFormattedOutput(status = 'Not run yet') {
+function clearFormattedOutput(status = 'Waiting for parser') {
   formatRequest += 1;
   clearCopyFeedback();
   setRulesError();
-  elements.formattedOutput.value = '';
-  elements.formattedOutput.classList.remove('has-error');
+  elements.formattedHighlightCode.replaceChildren();
+  elements.formattedHighlightCode.classList.remove('has-error');
   elements.copyOutputButton.disabled = true;
   elements.formatStatus.textContent = status;
 }
 
-function setSource(source, { clearOutput = true } = {}) {
+function setSource(source) {
   elements.sourceInput.value = source;
-  if (clearOutput) clearFormattedOutput();
-  updateLineNumbers(source);
-  updateCursorPosition();
+  handleEditorInput();
   syncEditorScroll();
-  analyzeSource();
 }
 
-function resetFormattingRules({ clearOutput = true } = {}) {
+function resetFormattingRules() {
   elements.formattingQuery.value = defaultQuery;
   elements.indentSize.value = String(defaultIndentSize);
-  setRulesError();
-  if (clearOutput) clearFormattedOutput('Output cleared');
+  formatSource();
 }
 
 function readFormattingOptions() {
@@ -246,17 +243,13 @@ function readFormattingOptions() {
 }
 
 async function formatSource() {
-  if (!parserReady) {
-    announce('The parser is still starting.');
-    return;
-  }
+  clearFormattedOutput();
+  if (!parserReady) return;
 
-  setRulesError();
   const diagnostics = currentAnalysis?.diagnostics || [];
   if (diagnostics.length > 0) {
     elements.formatStatus.textContent = 'Fix syntax issues first';
-    elements.formattedOutput.classList.add('has-error');
-    announce('Formatting is paused until syntax issues are fixed.');
+    elements.formattedHighlightCode.classList.add('has-error');
     return;
   }
 
@@ -264,38 +257,28 @@ async function formatSource() {
   try {
     options = readFormattingOptions();
   } catch (error) {
-    const message = errorMessage(error);
-    elements.formattedOutput.value = '';
-    elements.formattedOutput.classList.add('has-error');
-    elements.copyOutputButton.disabled = true;
+    elements.formattedHighlightCode.classList.add('has-error');
     elements.formatStatus.textContent = 'Formatter rules need attention';
-    setRulesError(`Configuration error: ${message}`);
-    announce(`Formatter configuration error: ${message}`);
+    setRulesError(`Configuration error: ${errorMessage(error)}`);
     return;
   }
 
-  const request = ++formatRequest;
-  elements.formatButton.disabled = true;
-  elements.copyOutputButton.disabled = true;
+  const request = formatRequest;
+  const source = elements.sourceInput.value;
   elements.formatStatus.textContent = 'Running Topiary…';
-  elements.formattedOutput.classList.remove('has-error');
 
   try {
-    const formatted = await format(elements.sourceInput.value, options);
+    const formatted = await format(source, options);
     if (request !== formatRequest) return;
-    elements.formattedOutput.value = String(formatted);
-    elements.copyOutputButton.disabled = elements.formattedOutput.value.length === 0;
-    elements.formatStatus.textContent = 'Formatted just now';
-    announce('Topiary formatting complete.');
+    const highlighted = analyze(formatted);
+    elements.formattedHighlightCode.innerHTML = highlighted.html;
+    elements.copyOutputButton.disabled = formatted.length === 0;
+    elements.formatStatus.textContent = 'Formatted automatically';
   } catch (error) {
     if (request !== formatRequest) return;
-    elements.formattedOutput.value = '';
-    elements.formattedOutput.classList.add('has-error');
+    elements.formattedHighlightCode.classList.add('has-error');
     elements.formatStatus.textContent = `Topiary error: ${errorMessage(error)}`;
     setRulesError(`Formatting error: ${errorMessage(error)}`);
-    announce(`Topiary could not format this expression: ${errorMessage(error)}`);
-  } finally {
-    if (parserReady) elements.formatButton.disabled = false;
   }
 }
 
@@ -371,34 +354,26 @@ function loadSelectedSample() {
 }
 
 function handleEditorInput() {
-  clearFormattedOutput('Output cleared');
   updateLineNumbers(elements.sourceInput.value);
   updateCursorPosition();
   analyzeSource();
+  formatSource();
 }
 
 function handleFormattingRulesInput() {
-  clearFormattedOutput('Output cleared');
-}
-
-function handleShortcut(event) {
-  if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key.toLowerCase() === 'f') {
-    event.preventDefault();
-    formatSource();
-  }
+  formatSource();
 }
 
 async function start() {
   setRuntimeStatus('loading', 'Starting parser');
-  elements.formatButton.disabled = true;
-  setSource(samples[defaultSample].source, { clearOutput: false });
+  setSource(samples[defaultSample].source);
 
   try {
     await initialize();
     parserReady = true;
     setRuntimeStatus('ready', 'Parser ready');
-    elements.formatButton.disabled = false;
     analyzeSource();
+    await formatSource();
   } catch (error) {
     setRuntimeStatus('error', 'Parser unavailable');
     elements.editorHelp.textContent = `Parser startup failed: ${errorMessage(error)}`;
@@ -421,11 +396,9 @@ elements.resetRulesButton.addEventListener('click', () => {
   resetFormattingRules();
   announce('Default formatter rules restored.');
 });
-elements.formatButton.addEventListener('click', formatSource);
-document.addEventListener('keydown', handleShortcut);
 document.querySelectorAll('.copy-button').forEach((button) => {
   button.addEventListener('click', () => copyTarget(button));
 });
 
-resetFormattingRules({ clearOutput: false });
+resetFormattingRules();
 start();

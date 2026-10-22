@@ -47,13 +47,43 @@ function inspectTree(tree) {
   return diagnostics;
 }
 
+// Error recovery can parse pieces of a malformed quoted literal as numbers or
+// punctuation. Keep those pieces visually together without accepting new syntax.
+// Valid string captures (including raw/regex strings) always remain opaque.
+function recoverQuotedStrings(source, captures) {
+  const strings = new Map(captures
+    .filter(({ name }) => name.split('.')[0] === 'string')
+    .map(({ node }) => [node.startIndex, node.endIndex]));
+  for (let start = 0; start < source.length;) {
+    if (strings.has(start)) {
+      start = strings.get(start);
+      continue;
+    }
+    const quote = source[start];
+    if (quote !== "'" && quote !== '"') {
+      start += 1;
+      continue;
+    }
+    let end = start + 1;
+    while (end < source.length) {
+      const char = source[end++];
+      if (char === quote) break;
+      if (char === '\\' && end < source.length) end += 1;
+    }
+    captures.push({ name: 'string', node: { startIndex: start, endIndex: end } });
+    start = end;
+  }
+}
+
 export function analyze(source) {
   if (!parser) throw new Error('The parser is still loading.');
   if (source.length > 20000) throw new Error('Please keep demo expressions below 20,000 characters.');
   const tree = parser.parse(source);
   try {
-    const captures = highlights.captures(tree.rootNode)
-      .sort((a, b) => a.node.startIndex - b.node.startIndex || b.node.endIndex - a.node.endIndex);
+    const diagnostics = inspectTree(tree);
+    const captures = highlights.captures(tree.rootNode);
+    if (diagnostics.length) recoverQuotedStrings(source, captures);
+    captures.sort((a, b) => a.node.startIndex - b.node.startIndex || b.node.endIndex - a.node.endIndex);
     let html = '', offset = 0;
     for (const { node, name } of captures) {
       if (node.startIndex < offset) continue;
@@ -63,7 +93,7 @@ export function analyze(source) {
       offset = node.endIndex;
     }
     html += escapeHTML(source.slice(offset));
-    return { html, diagnostics: inspectTree(tree), ast: renderTree(tree.rootNode) };
+    return { html, diagnostics, ast: renderTree(tree.rootNode) };
   } finally { tree.delete(); }
 }
 

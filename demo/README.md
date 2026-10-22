@@ -28,9 +28,9 @@ After a WASM build, frontend-only changes need only `npm --prefix demo run build
 
 ### Playground behavior
 
-The UI includes samples, syntax diagnostics with line/column locations, a concrete syntax tree with field labels and operators, copying, and keyboard formatting with **Ctrl/⌘ + Shift + F**. Expressions are limited to 20,000 characters, custom queries to 64,000, and tree display is bounded for deeply nested input.
+The playground pairs a highlighted input editor with highlighted formatted output. Formatting runs on every edit and sample change. Syntax diagnostics include line/column locations; the syntax tree and formatter rules are collapsed by default. Expressions are limited to 20,000 characters, custom queries to 64,000, and tree display is bounded for deeply nested input.
 
-**Formatter rules** lets you edit the Topiary query and choose 2-, 4-, or 8-space indentation. Rule edits apply to the next Format action and stay local to the page. **Reset rules** restores defaults without changing the expression. Invalid queries, non-idempotent output, syntax changes, and token changes report errors.
+**Formatter rules** lets you edit the Topiary query and choose 2-, 4-, or 8-space indentation. Query and indentation edits immediately update the formatted output and stay local to the page. Invalid input or rules clear the formatted output until corrected. On malformed input, quoted text stays visually intact while syntax diagnostics remain active; this does not add single-quoted strings to the language. **Reset rules** restores defaults without changing the expression. Invalid queries, non-idempotent output, syntax changes, and token changes report errors.
 
 ## Deploy to Cloudflare Workers
 
