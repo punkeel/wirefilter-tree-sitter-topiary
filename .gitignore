@@ -12,3 +12,5 @@ demo/test-results/
 demo/playwright-report/
 .sites-runtime/
 .sites-checkout/
+
+/dist/

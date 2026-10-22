@@ -53,7 +53,7 @@ The demo includes samples, live syntax errors with line/column locations, a tree
 
 ## Workers hosting
 
-`.openai/hosting.json` records the Sites deployment, which serves `demo/dist` on Cloudflare Workers. The same static output can be deployed to your own Cloudflare account using `demo/wrangler.jsonc`:
+`.openai/hosting.json` records the Sites deployment, which serves `dist` on Cloudflare Workers. The same static output can be deployed to your own Cloudflare account using `demo/wrangler.jsonc`:
 
 ```sh
 npm run demo:build

@@ -2,5 +2,5 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "wirefilter-playground",
   "compatibility_date": "2026-10-22",
-  "assets": { "directory": "./dist" }
+  "assets": { "directory": "../dist" }
 }
