@@ -146,6 +146,52 @@
                 </div>
               </section>
 
+              <details class="formatter-settings card-surface" id="formatter-settings" open>
+                <summary>
+                  <span class="formatter-summary-copy">
+                    <span class="card-label"><span class="label-dot label-dot-orange" aria-hidden="true"></span>Advanced</span>
+                    <span class="formatter-settings-title">Formatter rules</span>
+                  </span>
+                  <span class="formatter-summary-state">Topiary configuration</span>
+                </summary>
+                <div class="formatter-settings-body">
+                  <p class="formatter-settings-copy" id="formatter-settings-help">
+                    The Wirefilter grammar is fixed. Edit the Topiary formatting rules and indentation here;
+                    these settings change presentation only, not which expressions the parser accepts.
+                  </p>
+                  <div class="formatter-fields">
+                    <div class="formatter-field formatter-query-field">
+                      <label for="formatting-query">Topiary query</label>
+                      <textarea
+                        id="formatting-query"
+                        class="formatting-query"
+                        aria-label="Topiary formatting query"
+                        aria-describedby="formatter-settings-help formatting-query-help rules-error"
+                        autocapitalize="off"
+                        autocomplete="off"
+                        autocorrect="off"
+                        spellcheck="false"
+                        rows="8"
+                      ></textarea>
+                      <span class="field-help" id="formatting-query-help">Edit rules, then press Format. Change the boolean operator’s @prepend_hardline to @prepend_space to keep a chain on one line.</span>
+                    </div>
+                    <div class="formatter-field indent-field">
+                      <label for="indent-size">Indentation</label>
+                      <select id="indent-size" aria-label="Formatter indentation size" aria-describedby="formatter-settings-help indentation-help">
+                        <option value="2">2 spaces</option>
+                        <option value="4">4 spaces</option>
+                        <option value="8">8 spaces</option>
+                      </select>
+                      <span class="field-help" id="indentation-help">Spaces per level. Tabs are not supported by Wirefilter.</span>
+                    </div>
+                  </div>
+                  <div class="formatter-actions">
+                    <button class="button button-quiet" id="reset-rules-button" type="button">Reset rules</button>
+                    <p class="rules-error" id="rules-error" role="alert" hidden></p>
+                  </div>
+                </div>
+              </details>
+
               <section class="scope-note" aria-labelledby="scope-title">
                 <div class="scope-icon" aria-hidden="true">!</div>
                 <div>

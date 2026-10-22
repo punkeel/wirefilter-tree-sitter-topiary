@@ -821,6 +821,177 @@ select:hover,
   white-space: nowrap;
 }
 
+.formatter-settings {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.formatter-settings summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  color: var(--text);
+  cursor: pointer;
+  list-style: none;
+}
+
+.formatter-settings summary::-webkit-details-marker {
+  display: none;
+}
+
+.formatter-settings summary:focus-visible {
+  outline: 2px solid var(--orange-bright);
+  outline-offset: -3px;
+}
+
+.formatter-settings summary::after {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  margin-left: auto;
+  border-right: 1px solid var(--text-soft);
+  border-bottom: 1px solid var(--text-soft);
+  content: "";
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 160ms ease;
+}
+
+.formatter-settings[open] summary {
+  border-bottom: 1px solid var(--line);
+}
+
+.formatter-settings[open] summary::after {
+  transform: translateY(2px) rotate(225deg);
+}
+
+.formatter-summary-copy {
+  display: grid;
+  gap: 2px;
+}
+
+.formatter-summary-copy .card-label {
+  margin-bottom: 0;
+}
+
+.formatter-settings-title {
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.formatter-summary-state {
+  color: var(--text-muted);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.formatter-settings-body {
+  padding: 18px 20px 20px;
+}
+
+.formatter-settings-copy {
+  max-width: 680px;
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.formatter-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  margin-top: 17px;
+}
+
+.formatter-field {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-width: 0;
+}
+
+.indent-field {
+  grid-template-columns: minmax(0, 1fr) 140px;
+  align-items: center;
+}
+
+.indent-field .field-help {
+  grid-column: 1 / -1;
+}
+
+.formatter-field label {
+  color: var(--text-soft);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.formatting-query,
+.indent-field select {
+  width: 100%;
+  color: #c9d5e8;
+  background: rgba(6, 12, 22, 0.56);
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  outline: none;
+}
+
+.formatting-query {
+  min-height: 280px;
+  padding: 11px 12px;
+  resize: vertical;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 11px;
+  font-variant-ligatures: none;
+  line-height: 1.55;
+  tab-size: 2;
+  white-space: pre;
+}
+
+.formatting-query:focus,
+.indent-field select:focus {
+  border-color: rgba(255, 155, 91, 0.55);
+  box-shadow: 0 0 0 1px rgba(255, 155, 91, 0.16);
+}
+
+.indent-field select {
+  max-width: none;
+}
+
+.field-help {
+  color: var(--text-muted);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.formatter-actions {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.rules-error {
+  max-width: 70%;
+  margin: 0;
+  padding: 8px 10px;
+  color: var(--red);
+  background: rgba(255, 143, 131, 0.07);
+  border: 1px solid rgba(255, 143, 131, 0.2);
+  border-radius: 6px;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.rules-error[hidden] {
+  display: none;
+}
+
 .scope-note {
   display: flex;
   gap: 12px;
@@ -896,6 +1067,10 @@ select:hover,
   .scope-note {
     grid-column: 1 / -1;
   }
+
+  .formatter-settings {
+    grid-column: 1 / -1;
+  }
 }
 
 @media (max-width: 700px) {
@@ -960,6 +1135,19 @@ select:hover,
     flex-direction: column;
     gap: 7px;
   }
+
+  .formatter-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .formatter-actions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .rules-error {
+    max-width: none;
+  }
 }
 
 @media (max-width: 460px) {
@@ -986,8 +1174,14 @@ select:hover,
   }
 
   .diagnostics,
-  .card-heading {
+  .card-heading,
+  .formatter-settings summary,
+  .formatter-settings-body {
     padding-right: 15px;
     padding-left: 15px;
+  }
+
+  .formatter-summary-state {
+    display: none;
   }
 }

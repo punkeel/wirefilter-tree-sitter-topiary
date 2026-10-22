@@ -1,10 +1,10 @@
-import { initialize, analyze, format } from './engine.js';
+import { initialize, analyze, format, defaultFormattingQuery, defaultIndent } from './engine.js';
 import './style.css';
 
 const samples = {
   'method-and-ip': {
     label: 'GET + IP set',
-    source: '(\nhttp.request.method eq "GET"\nand ip.src in {192.0.2.0/24 2001:db8::/32}\n) or not http.request.uri.path contains r#"/admin"#',
+    source: '(http.request.method eq "GET" and ip.src in {192.0.2.0/24 2001:db8::/32}) or not http.request.uri.path contains r#"/admin"#',
   },
   operators: {
     label: 'Operators + list',
@@ -25,6 +25,9 @@ const samples = {
 };
 
 const defaultSample = 'method-and-ip';
+const allowedIndents = [2, 4, 8];
+const defaultQuery = typeof defaultFormattingQuery === 'string' ? defaultFormattingQuery : '';
+const defaultIndentSize = allowedIndents.includes(Number(defaultIndent)) ? Number(defaultIndent) : 4;
 
 const elements = {
   runtimeStatus: document.querySelector('#runtime-status'),
@@ -48,6 +51,11 @@ const elements = {
   copyOutputButton: document.querySelector('#copy-output-button'),
   formatStatus: document.querySelector('#format-status'),
   copyFeedback: document.querySelector('#copy-feedback'),
+  formatterSettings: document.querySelector('#formatter-settings'),
+  formattingQuery: document.querySelector('#formatting-query'),
+  indentSize: document.querySelector('#indent-size'),
+  resetRulesButton: document.querySelector('#reset-rules-button'),
+  rulesError: document.querySelector('#rules-error'),
   announcer: document.querySelector('#announcer'),
 };
 
@@ -176,6 +184,24 @@ function renderAnalysisFailure(error) {
   announce(`Parser error: ${errorMessage(error)}`);
 }
 
+function setRulesError(message = '') {
+  elements.rulesError.textContent = message;
+  elements.rulesError.hidden = !message;
+  if (message) elements.formatterSettings.open = true;
+}
+
+function clearCopyFeedback() {
+  window.clearTimeout(copyFeedbackTimer);
+  elements.copyFeedback.textContent = '';
+  document.querySelectorAll('.copy-button[data-original-label]').forEach((button) => {
+    const original = button.dataset.originalLabel;
+    button.setAttribute('aria-label', original);
+    button.classList.remove('is-copied');
+    const label = button.querySelector('.sr-only');
+    if (label) label.textContent = original;
+  });
+}
+
 function analyzeSource() {
   if (!parserReady) return;
   try {
@@ -187,6 +213,8 @@ function analyzeSource() {
 
 function clearFormattedOutput(status = 'Not run yet') {
   formatRequest += 1;
+  clearCopyFeedback();
+  setRulesError();
   elements.formattedOutput.value = '';
   elements.formattedOutput.classList.remove('has-error');
   elements.copyOutputButton.disabled = true;
@@ -202,17 +230,47 @@ function setSource(source, { clearOutput = true } = {}) {
   analyzeSource();
 }
 
+function resetFormattingRules({ clearOutput = true } = {}) {
+  elements.formattingQuery.value = defaultQuery;
+  elements.indentSize.value = String(defaultIndentSize);
+  setRulesError();
+  if (clearOutput) clearFormattedOutput('Output cleared');
+}
+
+function readFormattingOptions() {
+  const query = elements.formattingQuery.value;
+  const indent = Number(elements.indentSize.value);
+  if (!query.trim()) throw new Error('The Topiary query cannot be empty.');
+  if (!allowedIndents.includes(indent)) throw new Error('Indentation must be 2, 4, or 8 spaces.');
+  return { query, indent };
+}
+
 async function formatSource() {
   if (!parserReady) {
     announce('The parser is still starting.');
     return;
   }
 
+  setRulesError();
   const diagnostics = currentAnalysis?.diagnostics || [];
   if (diagnostics.length > 0) {
     elements.formatStatus.textContent = 'Fix syntax issues first';
     elements.formattedOutput.classList.add('has-error');
     announce('Formatting is paused until syntax issues are fixed.');
+    return;
+  }
+
+  let options;
+  try {
+    options = readFormattingOptions();
+  } catch (error) {
+    const message = errorMessage(error);
+    elements.formattedOutput.value = '';
+    elements.formattedOutput.classList.add('has-error');
+    elements.copyOutputButton.disabled = true;
+    elements.formatStatus.textContent = 'Formatter rules need attention';
+    setRulesError(`Configuration error: ${message}`);
+    announce(`Formatter configuration error: ${message}`);
     return;
   }
 
@@ -223,7 +281,7 @@ async function formatSource() {
   elements.formattedOutput.classList.remove('has-error');
 
   try {
-    const formatted = await format(elements.sourceInput.value);
+    const formatted = await format(elements.sourceInput.value, options);
     if (request !== formatRequest) return;
     elements.formattedOutput.value = String(formatted);
     elements.copyOutputButton.disabled = elements.formattedOutput.value.length === 0;
@@ -234,6 +292,7 @@ async function formatSource() {
     elements.formattedOutput.value = '';
     elements.formattedOutput.classList.add('has-error');
     elements.formatStatus.textContent = `Topiary error: ${errorMessage(error)}`;
+    setRulesError(`Formatting error: ${errorMessage(error)}`);
     announce(`Topiary could not format this expression: ${errorMessage(error)}`);
   } finally {
     if (parserReady) elements.formatButton.disabled = false;
@@ -318,6 +377,10 @@ function handleEditorInput() {
   analyzeSource();
 }
 
+function handleFormattingRulesInput() {
+  clearFormattedOutput('Output cleared');
+}
+
 function handleShortcut(event) {
   if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key.toLowerCase() === 'f') {
     event.preventDefault();
@@ -352,10 +415,17 @@ elements.sourceInput.addEventListener('keyup', updateCursorPosition);
 elements.sourceInput.addEventListener('select', updateCursorPosition);
 elements.sampleSelect.addEventListener('change', loadSelectedSample);
 elements.resetButton.addEventListener('click', resetToDefault);
+elements.formattingQuery.addEventListener('input', handleFormattingRulesInput);
+elements.indentSize.addEventListener('change', handleFormattingRulesInput);
+elements.resetRulesButton.addEventListener('click', () => {
+  resetFormattingRules();
+  announce('Default formatter rules restored.');
+});
 elements.formatButton.addEventListener('click', formatSource);
 document.addEventListener('keydown', handleShortcut);
 document.querySelectorAll('.copy-button').forEach((button) => {
   button.addEventListener('click', () => copyTarget(button));
 });
 
+resetFormattingRules({ clearOutput: false });
 start();

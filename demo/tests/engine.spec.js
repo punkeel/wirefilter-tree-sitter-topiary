@@ -64,6 +64,124 @@ test('breaks boolean aliases, keeps simple comparisons compact, and preserves li
   expect(await page.evaluate(input => window.engine.format(input), literalOutput)).toBe(literalOutput);
 });
 
+test('exports the default rules and supports a compact custom boolean rule', async ({ page }) => {
+  await enginePage(page);
+  const source = 'http.host eq "a" and http.host eq "b"';
+  const result = await page.evaluate(async source => {
+    const { defaultFormattingQuery, defaultIndent } = window.engine;
+    const compactQuery = defaultFormattingQuery.replace(
+      '["and" "&&" "xor" "^^" "or" "||"] @prepend_hardline',
+      '["and" "&&" "xor" "^^" "or" "||"] @prepend_space',
+    );
+    return {
+      defaultFormattingQuery,
+      defaultIndent,
+      defaultOutput: await window.engine.format(source),
+      explicitDefaultOutput: await window.engine.format(source, {
+        query: defaultFormattingQuery,
+        indent: defaultIndent,
+      }),
+      compactOutput: await window.engine.format(source, {
+        query: compactQuery,
+        indent: defaultIndent,
+      }),
+    };
+  }, source);
+
+  expect(typeof result.defaultFormattingQuery).toBe('string');
+  expect(result.defaultFormattingQuery).toContain('@prepend_hardline');
+  expect(result.defaultIndent).toBe(4);
+  expect(result.defaultOutput).toBe(result.explicitDefaultOutput);
+  expect(result.defaultOutput).toContain('\nand ');
+  expect(result.compactOutput).toBe('http.host eq "a" and http.host eq "b"\n');
+});
+
+test('applies custom indentation and keeps literals opaque under custom spacing', async ({ page }) => {
+  await enginePage(page);
+  const nestedSource = '((http.host eq "a" && http.request.method eq "GET") || ip.src eq 192.0.2.1) ^^ http.host eq "b"';
+  const quoted = String.raw`"café  🐈 \x20 \"quoted\""`;
+  const raw = String.raw`r##"raw # text
+  keep  spacing 🦊"##`;
+  const literalSource = `http.host eq ${quoted} && http.path contains ${raw} && http.host contains 01:ab:ff`;
+  const result = await page.evaluate(async ({ nestedSource, literalSource }) => {
+    const { defaultFormattingQuery } = window.engine;
+    const compactQuery = defaultFormattingQuery.replace(
+      '["and" "&&" "xor" "^^" "or" "||"] @prepend_hardline',
+      '["and" "&&" "xor" "^^" "or" "||"] @prepend_space',
+    );
+    return {
+      indent2: await window.engine.format(nestedSource, { indent: 2 }),
+      indent8: await window.engine.format(nestedSource, { indent: 8 }),
+      literals: await window.engine.format(literalSource, { query: compactQuery, indent: 8 }),
+    };
+  }, { nestedSource, literalSource });
+
+  expect(result.indent2).toBe(`(
+  (
+    http.host eq "a"
+    && http.request.method eq "GET"
+  )
+  || ip.src eq 192.0.2.1
+)
+^^ http.host eq "b"
+`);
+  expect(result.indent8).toBe(`(
+        (
+                http.host eq "a"
+                && http.request.method eq "GET"
+        )
+        || ip.src eq 192.0.2.1
+)
+^^ http.host eq "b"
+`);
+  expect(result.literals).toContain(quoted);
+  expect(result.literals).toContain(raw);
+  expect(result.literals).toContain('01:ab:ff');
+});
+
+test('rejects invalid rules and indentation without poisoning later formatting', async ({ page }) => {
+  await enginePage(page);
+  const source = 'http.host eq "a" and http.host eq "b"';
+  const result = await page.evaluate(async source => {
+    const cases = [
+      { label: 'invalid query', query: '(' },
+      { label: 'unknown node', query: '(does_not_exist) @leaf' },
+      { label: 'unknown capture', query: '(comparison_operator) @unknown_capture' },
+    ];
+    const rejections = [];
+    for (const item of cases) {
+      try {
+        await window.engine.format(source, { query: item.query });
+        rejections.push({ label: item.label, rejected: false });
+      } catch (error) {
+        rejections.push({ label: item.label, rejected: true, message: String(error) });
+      }
+    }
+
+    let indentationRejected = false;
+    try {
+      await window.engine.format(source, { indent: 3 });
+    } catch {
+      indentationRejected = true;
+    }
+
+    return {
+      rejections,
+      indentationRejected,
+      recovered: await window.engine.format(source),
+    };
+  }, source);
+
+  expect(result.rejections.map(item => item.label)).toEqual([
+    'invalid query',
+    'unknown node',
+    'unknown capture',
+  ]);
+  expect(result.rejections.every(item => item.rejected && item.message)).toBe(true);
+  expect(result.indentationRejected).toBe(true);
+  expect(result.recovered).toBe('http.host eq "a"\nand http.host eq "b"\n');
+});
+
 const fixtureDir = fileURLToPath(new URL('../../tests/', import.meta.url));
 for (const file of readdirSync(fixtureDir).filter(file => file.endsWith('.input.wirefilter'))) {
   test(`browser Topiary matches native golden: ${file}`, async ({ page }) => {
