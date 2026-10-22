@@ -1,0 +1,10 @@
+{
+  "name": "wirefilter-tree-sitter-topiary",
+  "private": true,
+  "scripts": {
+    "build": "bash scripts/build.sh",
+    "test": "bash scripts/test.sh",
+    "demo:build": "bash scripts/build-demo.sh",
+    "demo:test": "npm --prefix demo test"
+  }
+}

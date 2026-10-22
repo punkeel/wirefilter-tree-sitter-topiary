@@ -2,8 +2,13 @@
   "grammars": [
     {
       "scope": "source.wirefilter",
-      "file-types": ["wirefilter", "wf"],
-      "highlights": "queries/highlights.scm"
+      "file-types": [
+        "wirefilter",
+        "wf"
+      ],
+      "highlights": "queries/highlights.scm",
+      "name": "wirefilter",
+      "path": "."
     }
   ],
   "metadata": {
