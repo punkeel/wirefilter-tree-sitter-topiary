@@ -5,6 +5,6 @@
     "build": "bash scripts/build.sh",
     "test": "bash scripts/test.sh",
     "demo:build": "bash scripts/build-demo.sh",
-    "demo:test": "npm --prefix demo test"
+    "demo:test": "bash scripts/test-demo.sh"
   }
 }

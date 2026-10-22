@@ -13,4 +13,6 @@ http.host eq "unterminated
 ip.src in {1, 2}
 a and
 CASES
+actual="$(printf '%s' 'http.host   eq   "x"' | ./scripts/format.sh)"
+[[ "$actual" == 'http.host eq "x"' ]] || { echo 'FAIL checked formatter rejected or changed a valid expression' >&2; exit 1; }
 echo 'PASS invalid syntax is rejected by checked formatter'

@@ -34,7 +34,7 @@ The local Topiary registration resolves the shared library relative to `topiary/
 
 ## Browser demo
 
-The browser uses the repository's grammar, highlighting query, and formatting query. Topiary 0.8.0 is compiled to WebAssembly with small, documented compatibility patches in `demo/formatter/vendor/`. Native and browser output are compared against the same golden files. The formatter retains source multiline structure; it does not implement line-width-driven wrapping.
+The browser uses the repository's grammar, highlighting query, and formatting query. Topiary 0.8.0 is compiled to WebAssembly with small, documented compatibility patches in `demo/formatter/vendor/`. Native and browser output are compared against the same golden files. The demo test command rebuilds both WASM modules and the frontend before running Playwright, so it cannot silently use an old build. The formatter retains source multiline structure; it does not implement line-width-driven wrapping.
 
 Building both WASM modules requires Docker, the Rust WASM target, and a matching wasm-bindgen CLI:
 
@@ -43,7 +43,7 @@ npm ci --prefix demo
 rustup target add wasm32-unknown-unknown
 cargo install wasm-bindgen-cli --version 0.2.126 --locked
 npm run demo:build
-npm run demo:test  # first: cd demo && npx playwright install chromium
+npm run demo:test  # rebuilds both WASM modules; first: cd demo && npx playwright install chromium
 npm --prefix demo run dev
 ```
 

@@ -9,5 +9,12 @@ fi
 source_file="$(mktemp --suffix=.wirefilter)"
 trap 'rm -f "$source_file"' EXIT
 cat "${1:-/dev/stdin}" > "$source_file"
-(cd "$ROOT/tree-sitter-wirefilter" && ./node_modules/.bin/tree-sitter parse --quiet "$source_file") >&2
+if ! parse_tree="$(cd "$ROOT/tree-sitter-wirefilter" && ./node_modules/.bin/tree-sitter parse "$source_file")"; then
+  printf '%s\n' "$parse_tree" >&2
+  exit 1
+fi
+if [[ "$parse_tree" == *"(ERROR"* || "$parse_tree" == *"(MISSING"* ]]; then
+  printf '%s\n' "$parse_tree" >&2
+  exit 1
+fi
 topiary -C "$ROOT/topiary/languages.ncl" format --language wirefilter < "$source_file"

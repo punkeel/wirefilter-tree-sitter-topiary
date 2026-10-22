@@ -158,7 +158,7 @@ function renderDiagnostics(diagnostics) {
 function renderAnalysis(result) {
   currentAnalysis = result;
   elements.highlightCode.innerHTML = typeof result?.html === 'string' ? result.html : '';
-  elements.astOutput.textContent = typeof result?.ast === 'string' && result.ast ? result.ast : '(no AST returned)';
+  elements.astOutput.textContent = typeof result?.ast === 'string' && result.ast ? result.ast : '(no syntax tree returned)';
   renderDiagnostics(result?.diagnostics);
   elements.editorHelp.textContent = (result?.diagnostics?.length || 0) > 0
     ? 'Fix the syntax issue before running Topiary.'
@@ -277,7 +277,7 @@ async function copyTarget(button) {
     }
   }
   showCopyFeedback(button, copied ? 'Copied' : 'Copy unavailable');
-  if (copied) announce(`${button.dataset.copyTarget === 'ast-output' ? 'AST' : 'Formatted output'} copied.`);
+  if (copied) announce(`${button.dataset.copyTarget === 'ast-output' ? 'Syntax tree' : 'Formatted output'} copied.`);
 }
 
 function showCopyFeedback(button, message) {
