@@ -22,6 +22,18 @@ different revision or modified tracked upstream files unless the corresponding
 `WIREFILTER_UPSTREAM_ALLOW_REVISION` or `WIREFILTER_UPSTREAM_ALLOW_DIRTY` override
 is explicitly set to `1` for an audit. It does not modify upstream source.
 
+## Upstream examples
+
+The [native Rust example suite](../tree-sitter-wirefilter/tests/upstream-examples/README.md)
+parses 408 distinct upstream inputs from documentation, benchmarks, engine tests,
+FFI tests, and fixed fuzz examples. It includes finite generated test expressions
+and stores concrete-tree and leaf-token snapshots. All 255 cases designated as
+complete valid syntax must parse without ERROR or missing nodes. The other
+cases include malformed input, prefix/value parser cases, and type errors;
+their snapshots do not assert semantic validity. Each case records its source
+location at the pinned revision. Unbounded fuzz and runtime inputs are outside
+this finite corpus.
+
 ## What the tests establish
 
 - Corpus tests check concrete tree shape, precedence, malformed input, and error

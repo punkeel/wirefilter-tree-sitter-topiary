@@ -1,0 +1,1632 @@
+"\n\n    xyz"
+(source_file (reference_expression name: (identifier)))
+[["identifier","xyz"]]
+
+"\n            http.method != \"POST\" &&\n            not http.ua matches \"(googlebot|facebook)\" &&\n            port in {80 443}\n        "
+(source_file (logical_expression left: (logical_expression left: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)) right: (unary_expression argument: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (regex_string)))) right: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (integer) (integer)))))
+[["identifier","http.method"],["!=","!="],["quoted_string","\"POST\""],["&&","&&"],["not","not"],["identifier","http.ua"],["matches","matches"],["regex_string","\"(googlebot|facebook)\""],["&&","&&"],["identifier","port"],["in","in"],["{","{"],["integer","80"],["integer","443"],["}","}"]]
+
+" arr[*] "
+(source_file (reference_expression name: (identifier) index: (index_access)))
+[["identifier","arr"],["[","["],["*","*"],["]","]"]]
+
+"! (not !at)"
+(source_file (unary_expression argument: (parenthesized_expression (unary_expression argument: (unary_expression argument: (reference_expression name: (identifier)))))))
+[["!","!"],["(","("],["not","not"],["!","!"],["identifier","at"],[")",")"]]
+
+"! (not !t)"
+(source_file (unary_expression argument: (parenthesized_expression (unary_expression argument: (unary_expression argument: (reference_expression name: (identifier)))))))
+[["!","!"],["(","("],["not","not"],["!","!"],["identifier","t"],[")",")"]]
+
+"!!at"
+(source_file (unary_expression argument: (unary_expression argument: (reference_expression name: (identifier)))))
+[["!","!"],["!","!"],["identifier","at"]]
+
+"!!t"
+(source_file (unary_expression argument: (unary_expression argument: (reference_expression name: (identifier)))))
+[["!","!"],["!","!"],["identifier","t"]]
+
+"!at"
+(source_file (unary_expression argument: (reference_expression name: (identifier))))
+[["!","!"],["identifier","at"]]
+
+"!t"
+(source_file (unary_expression argument: (reference_expression name: (identifier))))
+[["!","!"],["identifier","t"]]
+
+"(\n    num1 == 42\n    or\n    num1 == \"abc\"\n)"
+(source_file (parenthesized_expression (logical_expression left: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)) right: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))))
+[["(","("],["identifier","num1"],["==","=="],["integer","42"],["or","or"],["identifier","num1"],["==","=="],["quoted_string","\"abc\""],[")",")"]]
+
+"((at))"
+(source_file (parenthesized_expression (parenthesized_expression (reference_expression name: (identifier)))))
+[["(","("],["(","("],["identifier","at"],[")",")"],[")",")"]]
+
+"((t))"
+(source_file (parenthesized_expression (parenthesized_expression (reference_expression name: (identifier)))))
+[["(","("],["(","("],["identifier","t"],[")",")"],[")",")"]]
+
+"(any(values[*] == \"HIT\"))"
+(source_file (parenthesized_expression (reference_expression name: (identifier) arguments: (argument_list (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (quoted_string))))))
+[["(","("],["identifier","any"],["(","("],["identifier","values"],["[","["],["*","*"],["]","]"],["==","=="],["quoted_string","\"HIT\""],[")",")"],[")",")"]]
+
+"(tcp.dstport != 80) and (udp.dstport != 80)"
+(source_file (logical_expression left: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer))) right: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))))
+[["(","("],["identifier","tcp.dstport"],["!=","!="],["integer","80"],[")",")"],["and","and"],["(","("],["identifier","udp.dstport"],["!=","!="],["integer","80"],[")",")"]]
+
+"(tcp.dstport != 80) or (udp.dstport != 80)"
+(source_file (logical_expression left: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer))) right: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))))
+[["(","("],["identifier","tcp.dstport"],["!=","!="],["integer","80"],[")",")"],["or","or"],["(","("],["identifier","udp.dstport"],["!=","!="],["integer","80"],[")",")"]]
+
+"(tcp.srcport == 1337) and ((tcp.dstport != 80) and ((tcp.flags.syn) or (udp.dstport != 80)))"
+(source_file (logical_expression left: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer))) right: (parenthesized_expression (logical_expression left: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer))) right: (parenthesized_expression (logical_expression left: (parenthesized_expression (reference_expression name: (identifier))) right: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))))))))
+[["(","("],["identifier","tcp.srcport"],["==","=="],["integer","1337"],[")",")"],["and","and"],["(","("],["(","("],["identifier","tcp.dstport"],["!=","!="],["integer","80"],[")",")"],["and","and"],["(","("],["(","("],["identifier","tcp.flags.syn"],[")",")"],["or","or"],["(","("],["identifier","udp.dstport"],["!=","!="],["integer","80"],[")",")"],[")",")"],[")",")"]]
+
+"(tcp.srcport == 1337) and ((tcp.dstport != 80) and (udp.dstport != 80))"
+(source_file (logical_expression left: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer))) right: (parenthesized_expression (logical_expression left: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer))) right: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))))))
+[["(","("],["identifier","tcp.srcport"],["==","=="],["integer","1337"],[")",")"],["and","and"],["(","("],["(","("],["identifier","tcp.dstport"],["!=","!="],["integer","80"],[")",")"],["and","and"],["(","("],["identifier","udp.dstport"],["!=","!="],["integer","80"],[")",")"],[")",")"]]
+
+"(tcp.srcport == 1337) and ((tcp.dstport != 80) or (udp.dstport != 80))"
+(source_file (logical_expression left: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer))) right: (parenthesized_expression (logical_expression left: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer))) right: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))))))
+[["(","("],["identifier","tcp.srcport"],["==","=="],["integer","1337"],[")",")"],["and","and"],["(","("],["(","("],["identifier","tcp.dstport"],["!=","!="],["integer","80"],[")",")"],["or","or"],["(","("],["identifier","udp.dstport"],["!=","!="],["integer","80"],[")",")"],[")",")"]]
+
+"(tcp.srcport == 1337) or ((tcp.dstport != 80) and (udp.dstport != 80))"
+(source_file (logical_expression left: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer))) right: (parenthesized_expression (logical_expression left: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer))) right: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))))))
+[["(","("],["identifier","tcp.srcport"],["==","=="],["integer","1337"],[")",")"],["or","or"],["(","("],["(","("],["identifier","tcp.dstport"],["!=","!="],["integer","80"],[")",")"],["and","and"],["(","("],["identifier","udp.dstport"],["!=","!="],["integer","80"],[")",")"],[")",")"]]
+
+"(tcp.srcport == 1337) or ((tcp.dstport != 80) or (udp.dstport != 80))"
+(source_file (logical_expression left: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer))) right: (parenthesized_expression (logical_expression left: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer))) right: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))))))
+[["(","("],["identifier","tcp.srcport"],["==","=="],["integer","1337"],[")",")"],["or","or"],["(","("],["(","("],["identifier","tcp.dstport"],["!=","!="],["integer","80"],[")",")"],["or","or"],["(","("],["identifier","udp.dstport"],["!=","!="],["integer","80"],[")",")"],[")",")"]]
+
+"aat[*]"
+(source_file (reference_expression name: (identifier) index: (index_access)))
+[["identifier","aat"],["[","["],["*","*"],["]","]"]]
+
+"af"
+(source_file (reference_expression name: (identifier)))
+[["identifier","af"]]
+
+"all(at)"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)))))
+[["identifier","all"],["(","("],["identifier","at"],[")",")"]]
+
+"all(empty_bool_array)"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)))))
+[["identifier","all"],["(","("],["identifier","empty_bool_array"],[")",")"]]
+
+"all(map.bool.arr[\"missing\"])"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access (quoted_string))))))
+[["identifier","all"],["(","("],["identifier","map.bool.arr"],["[","["],["quoted_string","\"missing\""],["]","]"],[")",")"]]
+
+"all(map.bytes.arr[\"missing\"][*] matches \"bar\")"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (comparison_expression left: (reference_expression name: (identifier) index: (index_access (quoted_string)) index: (index_access)) operator: (comparison_operator) right: (regex_string)))))
+[["identifier","all"],["(","("],["identifier","map.bytes.arr"],["[","["],["quoted_string","\"missing\""],["]","]"],["[","["],["*","*"],["]","]"],["matches","matches"],["regex_string","\"bar\""],[")",")"]]
+
+"all(map_bool_array[\"missing\"])"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access (quoted_string))))))
+[["identifier","all"],["(","("],["identifier","map_bool_array"],["[","["],["quoted_string","\"missing\""],["]","]"],[")",")"]]
+
+"all(map_bytes_array[\"missing\"][*] matches \"bar\")"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (comparison_expression left: (reference_expression name: (identifier) index: (index_access (quoted_string)) index: (index_access)) operator: (comparison_operator) right: (regex_string)))))
+[["identifier","all"],["(","("],["identifier","map_bytes_array"],["[","["],["quoted_string","\"missing\""],["]","]"],["[","["],["*","*"],["]","]"],["matches","matches"],["regex_string","\"bar\""],[")",")"]]
+
+"all(values[*] in {\"HIT\" \"UPDATE\"})"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (set_literal (quoted_string) (quoted_string))))))
+[["identifier","all"],["(","("],["identifier","values"],["[","["],["*","*"],["]","]"],["in","in"],["{","{"],["quoted_string","\"HIT\""],["quoted_string","\"UPDATE\""],["}","}"],[")",")"]]
+
+"any ( ( http.request.headers.is_empty or http.request.headers.is_empty ) )"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (parenthesized_expression (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier)))))))
+[["identifier","any"],["(","("],["(","("],["identifier","http.request.headers.is_empty"],["or","or"],["identifier","http.request.headers.is_empty"],[")",")"],[")",")"]]
+
+"any(!(http.request.headers.names[*] in {\"Cookie\" \"Cookies\"}))"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (unary_expression argument: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (set_literal (quoted_string) (quoted_string))))))))
+[["identifier","any"],["(","("],["!","!"],["(","("],["identifier","http.request.headers.names"],["[","["],["*","*"],["]","]"],["in","in"],["{","{"],["quoted_string","\"Cookie\""],["quoted_string","\"Cookies\""],["}","}"],[")",")"],[")",")"]]
+
+"any(at)"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)))))
+[["identifier","any"],["(","("],["identifier","at"],[")",")"]]
+
+"any(empty_bool_array)"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)))))
+[["identifier","any"],["(","("],["identifier","empty_bool_array"],[")",")"]]
+
+"any(lower(http.request.headers.names[*])[*] contains \"c\")"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (comparison_expression left: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access))) index: (index_access)) operator: (comparison_operator) right: (quoted_string)))))
+[["identifier","any"],["(","("],["identifier","lower"],["(","("],["identifier","http.request.headers.names"],["[","["],["*","*"],["]","]"],[")",")"],["[","["],["*","*"],["]","]"],["contains","contains"],["quoted_string","\"c\""],[")",")"]]
+
+"any(map.bool.arr[\"missing\"])"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access (quoted_string))))))
+[["identifier","any"],["(","("],["identifier","map.bool.arr"],["[","["],["quoted_string","\"missing\""],["]","]"],[")",")"]]
+
+"any(map.bytes.arr[\"missing\"][*] matches \"bar\")"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (comparison_expression left: (reference_expression name: (identifier) index: (index_access (quoted_string)) index: (index_access)) operator: (comparison_operator) right: (regex_string)))))
+[["identifier","any"],["(","("],["identifier","map.bytes.arr"],["[","["],["quoted_string","\"missing\""],["]","]"],["[","["],["*","*"],["]","]"],["matches","matches"],["regex_string","\"bar\""],[")",")"]]
+
+"any(map_bool_array[\"missing\"])"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access (quoted_string))))))
+[["identifier","any"],["(","("],["identifier","map_bool_array"],["[","["],["quoted_string","\"missing\""],["]","]"],[")",")"]]
+
+"any(map_bytes_array[\"missing\"][*] matches \"bar\")"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (comparison_expression left: (reference_expression name: (identifier) index: (index_access (quoted_string)) index: (index_access)) operator: (comparison_operator) right: (regex_string)))))
+[["identifier","any"],["(","("],["identifier","map_bytes_array"],["[","["],["quoted_string","\"missing\""],["]","]"],["[","["],["*","*"],["]","]"],["matches","matches"],["regex_string","\"bar\""],[")",")"]]
+
+"any(not(http.request.headers.names[*] in {\"Cookie\" \"Cookies\"}))"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (unary_expression argument: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (set_literal (quoted_string) (quoted_string))))))))
+[["identifier","any"],["(","("],["not","not"],["(","("],["identifier","http.request.headers.names"],["[","["],["*","*"],["]","]"],["in","in"],["{","{"],["quoted_string","\"Cookie\""],["quoted_string","\"Cookies\""],["}","}"],[")",")"],[")",")"]]
+
+"any(t)"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)))))
+[["identifier","any"],["(","("],["identifier","t"],[")",")"]]
+
+"any(tcp.ports[*] in $even)"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (list_reference)))))
+[["identifier","any"],["(","("],["identifier","tcp.ports"],["[","["],["*","*"],["]","]"],["in","in"],["list_reference","$even"],[")",")"]]
+
+"any(values[*] == \"HIT\") and any(values[*] == \"UPDATE\")"
+(source_file (logical_expression left: (reference_expression name: (identifier) arguments: (argument_list (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (quoted_string)))) right: (reference_expression name: (identifier) arguments: (argument_list (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (quoted_string))))))
+[["identifier","any"],["(","("],["identifier","values"],["[","["],["*","*"],["]","]"],["==","=="],["quoted_string","\"HIT\""],[")",")"],["and","and"],["identifier","any"],["(","("],["identifier","values"],["[","["],["*","*"],["]","]"],["==","=="],["quoted_string","\"UPDATE\""],[")",")"]]
+
+"any(values[*] in {\"HIT\" \"UPDATE\"})"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (set_literal (quoted_string) (quoted_string))))))
+[["identifier","any"],["(","("],["identifier","values"],["[","["],["*","*"],["]","]"],["in","in"],["{","{"],["quoted_string","\"HIT\""],["quoted_string","\"UPDATE\""],["}","}"],[")",")"]]
+
+"arr and arr"
+(source_file (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier))))
+[["identifier","arr"],["and","and"],["identifier","arr"]]
+
+"arr and arr\n"
+(source_file (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier))))
+[["identifier","arr"],["and","and"],["identifier","arr"]]
+
+"arr[*]"
+(source_file (reference_expression name: (identifier) index: (index_access)))
+[["identifier","arr"],["[","["],["*","*"],["]","]"]]
+
+"arr[*] "
+(source_file (reference_expression name: (identifier) index: (index_access)))
+[["identifier","arr"],["[","["],["*","*"],["]","]"]]
+
+"arr[0] != \"\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access (integer))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","arr"],["[","["],["integer","0"],["]","]"],["!=","!="],["quoted_string","\"\""]]
+
+"array(test[0])[*]"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access (integer)))) index: (index_access)))
+[["identifier","array"],["(","("],["identifier","test"],["[","["],["integer","0"],["]","]"],[")",")"],["[","["],["*","*"],["]","]"]]
+
+"array(test[0])[0]"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access (integer)))) index: (index_access (integer))))
+[["identifier","array"],["(","("],["identifier","test"],["[","["],["integer","0"],["]","]"],[")",")"],["[","["],["integer","0"],["]","]"]]
+
+"array2(test[0])[*][*]"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access (integer)))) index: (index_access) index: (index_access)))
+[["identifier","array2"],["(","("],["identifier","test"],["[","["],["integer","0"],["]","]"],[")",")"],["[","["],["*","*"],["]","]"],["[","["],["*","*"],["]","]"]]
+
+"array2(test[0])[*][0]"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access (integer)))) index: (index_access) index: (index_access (integer))))
+[["identifier","array2"],["(","("],["identifier","test"],["[","["],["integer","0"],["]","]"],[")",")"],["[","["],["*","*"],["]","]"],["[","["],["integer","0"],["]","]"]]
+
+"array2(test[0])[0][*]"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access (integer)))) index: (index_access (integer)) index: (index_access)))
+[["identifier","array2"],["(","("],["identifier","test"],["[","["],["integer","0"],["]","]"],[")",")"],["[","["],["integer","0"],["]","]"],["[","["],["*","*"],["]","]"]]
+
+"at"
+(source_file (reference_expression name: (identifier)))
+[["identifier","at"]]
+
+"at and af"
+(source_file (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier))))
+[["identifier","at"],["and","and"],["identifier","af"]]
+
+"at and f"
+(source_file (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier))))
+[["identifier","at"],["and","and"],["identifier","f"]]
+
+"at or af"
+(source_file (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier))))
+[["identifier","at"],["or","or"],["identifier","af"]]
+
+"at or f"
+(source_file (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier))))
+[["identifier","at"],["or","or"],["identifier","f"]]
+
+"at xor af"
+(source_file (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier))))
+[["identifier","at"],["xor","xor"],["identifier","af"]]
+
+"at xor f"
+(source_file (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier))))
+[["identifier","at"],["xor","xor"],["identifier","f"]]
+
+"at[*]"
+(source_file (reference_expression name: (identifier) index: (index_access)))
+[["identifier","at"],["[","["],["*","*"],["]","]"]]
+
+"bool in {\"test\"}"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (quoted_string))))
+[["identifier","bool"],["in","in"],["{","{"],["quoted_string","\"test\""],["}","}"]]
+
+"bool in {0}"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (integer))))
+[["identifier","bool"],["in","in"],["{","{"],["integer","0"],["}","}"]]
+
+"bool in {127.0.0.1}"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (ip_address))))
+[["identifier","bool"],["in","in"],["{","{"],["ip_address","127.0.0.1"],["}","}"]]
+
+"bytes.lhs != bytes.rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","bytes.lhs"],["!=","!="],["identifier","bytes.rhs"]]
+
+"bytes.lhs < bytes.rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","bytes.lhs"],["<","<"],["identifier","bytes.rhs"]]
+
+"bytes.lhs <= bytes.rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","bytes.lhs"],["<=","<="],["identifier","bytes.rhs"]]
+
+"bytes.lhs == bytes.rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","bytes.lhs"],["==","=="],["identifier","bytes.rhs"]]
+
+"bytes.lhs > bytes.rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","bytes.lhs"],[">",">"],["identifier","bytes.rhs"]]
+
+"bytes.lhs >= bytes.rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","bytes.lhs"],[">=",">="],["identifier","bytes.rhs"]]
+
+"concat(0, 0) == 0"
+(source_file (comparison_expression left: (reference_expression name: (identifier) arguments: (argument_list (integer) (integer))) operator: (comparison_operator) right: (integer)))
+[["identifier","concat"],["(","("],["integer","0"],[",",","],["integer","0"],[")",")"],["==","=="],["integer","0"]]
+
+"concat(http.cookies[*], \"-cf\")"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access)) (quoted_string))))
+[["identifier","concat"],["(","("],["identifier","http.cookies"],["[","["],["*","*"],["]","]"],[",",","],["quoted_string","\"-cf\""],[")",")"]]
+
+"concat(http.cookies[*], \"-cf\")[*] == \"three-cf\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access)) (quoted_string)) index: (index_access)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","concat"],["(","("],["identifier","http.cookies"],["[","["],["*","*"],["]","]"],[",",","],["quoted_string","\"-cf\""],[")",")"],["[","["],["*","*"],["]","]"],["==","=="],["quoted_string","\"three-cf\""]]
+
+"concat(http.cookies[*], \"-cf\")[2] == \"three-cf\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access)) (quoted_string)) index: (index_access (integer))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","concat"],["(","("],["identifier","http.cookies"],["[","["],["*","*"],["]","]"],[",",","],["quoted_string","\"-cf\""],[")",")"],["[","["],["integer","2"],["]","]"],["==","=="],["quoted_string","\"three-cf\""]]
+
+"concat(http.headers[*], \"-cf\")[2] in {\"one-cf\" \"two-cf\" \"three-cf\"}"
+(source_file (comparison_expression left: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access)) (quoted_string)) index: (index_access (integer))) operator: (comparison_operator) right: (set_literal (quoted_string) (quoted_string) (quoted_string))))
+[["identifier","concat"],["(","("],["identifier","http.headers"],["[","["],["*","*"],["]","]"],[",",","],["quoted_string","\"-cf\""],[")",")"],["[","["],["integer","2"],["]","]"],["in","in"],["{","{"],["quoted_string","\"one-cf\""],["quoted_string","\"two-cf\""],["quoted_string","\"three-cf\""],["}","}"]]
+
+"concat(http.host) == \"example.org\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","concat"],["(","("],["identifier","http.host"],[")",")"],["==","=="],["quoted_string","\"example.org\""]]
+
+"concat(http.host, \".org\") == \"example.org\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)) (quoted_string))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","concat"],["(","("],["identifier","http.host"],[",",","],["quoted_string","\".org\""],[")",")"],["==","=="],["quoted_string","\"example.org\""]]
+
+"concat(http.host, r#\"cd\"#) == r##\"abcd\"##"
+(source_file (comparison_expression left: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)) (raw_string))) operator: (comparison_operator) right: (raw_string)))
+[["identifier","concat"],["(","("],["identifier","http.host"],[",",","],["raw_string","r#\"cd\"#"],[")",")"],["==","=="],["raw_string","r##\"abcd\"##"]]
+
+"concat_fields(http.cookies[*], lowercase(http.host))"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access)) (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)))))))
+[["identifier","concat_fields"],["(","("],["identifier","http.cookies"],["[","["],["*","*"],["]","]"],[",",","],["identifier","lowercase"],["(","("],["identifier","http.host"],[")",")"],[")",")"]]
+
+"echo ( \"test\" );"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (quoted_string))) (ERROR (UNEXPECTED ';')))
+[["identifier","echo"],["(","("],["quoted_string","\"test\""],[")",")"],["ERROR",";"]]
+
+"echo ( );"
+(source_file (reference_expression name: (identifier) arguments: (argument_list)) (ERROR (UNEXPECTED ';')))
+[["identifier","echo"],["(","("],[")",")"],["ERROR",";"]]
+
+"echo ( 10 );"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (integer))) (ERROR (UNEXPECTED ';')))
+[["identifier","echo"],["(","("],["integer","10"],[")",")"],["ERROR",";"]]
+
+"echo ( echo ( echo ( http.host ) ) )"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)))))))))
+[["identifier","echo"],["(","("],["identifier","echo"],["(","("],["identifier","echo"],["(","("],["identifier","http.host"],[")",")"],[")",")"],[")",")"]]
+
+"echo ( echo ( http.host ) );"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)))))) (ERROR (UNEXPECTED ';')))
+[["identifier","echo"],["(","("],["identifier","echo"],["(","("],["identifier","http.host"],[")",")"],[")",")"],["ERROR",";"]]
+
+"echo ( echo ( http.test ) );"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)))))) (ERROR (UNEXPECTED ';')))
+[["identifier","echo"],["(","("],["identifier","echo"],["(","("],["identifier","http.test"],[")",")"],[")",")"],["ERROR",";"]]
+
+"echo ( http.headers[*] );"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access)))) (ERROR (UNEXPECTED ';')))
+[["identifier","echo"],["(","("],["identifier","http.headers"],["[","["],["*","*"],["]","]"],[")",")"],["ERROR",";"]]
+
+"echo ( http.headers[*][\"host\"] );"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access) index: (index_access (quoted_string))))) (ERROR (UNEXPECTED ';')))
+[["identifier","echo"],["(","("],["identifier","http.headers"],["[","["],["*","*"],["]","]"],["[","["],["quoted_string","\"host\""],["]","]"],[")",")"],["ERROR",";"]]
+
+"echo ( http.host );"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)))) (ERROR (UNEXPECTED ';')))
+[["identifier","echo"],["(","("],["identifier","http.host"],[")",")"],["ERROR",";"]]
+
+"echo ( http.host , http.host );"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)) (reference_expression name: (identifier)))) (ERROR (UNEXPECTED ';')))
+[["identifier","echo"],["(","("],["identifier","http.host"],[",",","],["identifier","http.host"],[")",")"],["ERROR",";"]]
+
+"echo ( http.host, 1, 2 );"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)) (integer) (integer))) (ERROR (UNEXPECTED ';')))
+[["identifier","echo"],["(","("],["identifier","http.host"],[",",","],["integer","1"],[",",","],["integer","2"],[")",")"],["ERROR",";"]]
+
+"echo ( http.host, 10, 2, \"test\" );"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)) (integer) (integer) (quoted_string))) (ERROR (UNEXPECTED ';')))
+[["identifier","echo"],["(","("],["identifier","http.host"],[",",","],["integer","10"],[",",","],["integer","2"],[",",","],["quoted_string","\"test\""],[")",")"],["ERROR",";"]]
+
+"echo ( http.host, http.headers[*] );"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)) (reference_expression name: (identifier) index: (index_access)))) (ERROR (UNEXPECTED ';')))
+[["identifier","echo"],["(","("],["identifier","http.host"],[",",","],["identifier","http.headers"],["[","["],["*","*"],["]","]"],[")",")"],["ERROR",";"]]
+
+"echo ( http.host[*] );"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access)))) (ERROR (UNEXPECTED ';')))
+[["identifier","echo"],["(","("],["identifier","http.host"],["[","["],["*","*"],["]","]"],[")",")"],["ERROR",";"]]
+
+"echo ( http.request.headers.names[*] );"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access)))) (ERROR (UNEXPECTED ';')))
+[["identifier","echo"],["(","("],["identifier","http.request.headers.names"],["[","["],["*","*"],["]","]"],[")",")"],["ERROR",";"]]
+
+"echo ( http.request.headers.names[*][0] );"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access) index: (index_access (integer))))) (ERROR (UNEXPECTED ';')))
+[["identifier","echo"],["(","("],["identifier","http.request.headers.names"],["[","["],["*","*"],["]","]"],["[","["],["integer","0"],["]","]"],[")",")"],["ERROR",";"]]
+
+"echo ( http.request.headers.names[0][*] );"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access (integer)) index: (index_access)))) (ERROR (UNEXPECTED ';')))
+[["identifier","echo"],["(","("],["identifier","http.request.headers.names"],["[","["],["integer","0"],["]","]"],["[","["],["*","*"],["]","]"],[")",")"],["ERROR",";"]]
+
+"echo ( http.test );"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)))) (ERROR (UNEXPECTED ';')))
+[["identifier","echo"],["(","("],["identifier","http.test"],[")",")"],["ERROR",";"]]
+
+"echo ( ip.addr );"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)))) (ERROR (UNEXPECTED ';')))
+[["identifier","echo"],["(","("],["identifier","ip.addr"],[")",")"],["ERROR",";"]]
+
+"echo (http.host,1,2);"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)) (integer) (integer))) (ERROR (UNEXPECTED ';')))
+[["identifier","echo"],["(","("],["identifier","http.host"],[",",","],["integer","1"],[",",","],["integer","2"],[")",")"],["ERROR",";"]]
+
+"echo(echo(http.headers[*])[*])[0] == \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access))) index: (index_access))) index: (index_access (integer))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","echo"],["(","("],["identifier","echo"],["(","("],["identifier","http.headers"],["[","["],["*","*"],["]","]"],[")",")"],["[","["],["*","*"],["]","]"],[")",")"],["[","["],["integer","0"],["]","]"],["==","=="],["quoted_string","\"test\""]]
+
+"echo(echo(http.headers[*])[*])[0] in $test"
+(source_file (comparison_expression left: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access))) index: (index_access))) index: (index_access (integer))) operator: (comparison_operator) right: (list_reference)))
+[["identifier","echo"],["(","("],["identifier","echo"],["(","("],["identifier","http.headers"],["[","["],["*","*"],["]","]"],[")",")"],["[","["],["*","*"],["]","]"],[")",")"],["[","["],["integer","0"],["]","]"],["in","in"],["list_reference","$test"]]
+
+"echo(http.host) == \"example.org\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","echo"],["(","("],["identifier","http.host"],[")",")"],["==","=="],["quoted_string","\"example.org\""]]
+
+"echo(http.host) == \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","echo"],["(","("],["identifier","http.host"],[")",")"],["==","=="],["quoted_string","\"test\""]]
+
+"echo(http.host) in $test"
+(source_file (comparison_expression left: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)))) operator: (comparison_operator) right: (list_reference)))
+[["identifier","echo"],["(","("],["identifier","http.host"],[")",")"],["in","in"],["list_reference","$test"]]
+
+"f"
+(source_file (reference_expression name: (identifier)))
+[["identifier","f"]]
+
+"f or f"
+(source_file (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier))))
+[["identifier","f"],["or","or"],["identifier","f"]]
+
+"f xor f"
+(source_file (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier))))
+[["identifier","f"],["xor","xor"],["identifier","f"]]
+
+"f xor t"
+(source_file (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier))))
+[["identifier","f"],["xor","xor"],["identifier","t"]]
+
+"filter(http.cookies, array.of.bool)[0] == \"three\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)) (reference_expression name: (identifier))) index: (index_access (integer))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","filter"],["(","("],["identifier","http.cookies"],[",",","],["identifier","array.of.bool"],[")",")"],["[","["],["integer","0"],["]","]"],["==","=="],["quoted_string","\"three\""]]
+
+"first(foo) == \"abc\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","first"],["(","("],["identifier","foo"],[")",")"],["==","=="],["quoted_string","\"abc\""]]
+
+"foo == \"\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","foo"],["==","=="],["quoted_string","\"\""]]
+
+"foo == 42"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","foo"],["==","=="],["integer","42"]]
+
+"http.cookies[*] == \"three\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.cookies"],["[","["],["*","*"],["]","]"],["==","=="],["quoted_string","\"three\""]]
+
+"http.cookies[*] >= http.other_host"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","http.cookies"],["[","["],["*","*"],["]","]"],[">=",">="],["identifier","http.other_host"]]
+
+"http.cookies[0] != \"example.org\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access (integer))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.cookies"],["[","["],["integer","0"],["]","]"],["!=","!="],["quoted_string","\"example.org\""]]
+
+"http.cookies[0] == \"example.org\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access (integer))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.cookies"],["[","["],["integer","0"],["]","]"],["==","=="],["quoted_string","\"example.org\""]]
+
+"http.cookies[0] contains \"abc\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access (integer))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.cookies"],["[","["],["integer","0"],["]","]"],["contains","contains"],["quoted_string","\"abc\""]]
+
+"http.cookies[2] == \"www.cloudflare.com\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access (integer))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.cookies"],["[","["],["integer","2"],["]","]"],["==","=="],["quoted_string","\"www.cloudflare.com\""]]
+
+"http.headers[\"host\"] == \"www.cloudflare.com\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access (quoted_string))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.headers"],["[","["],["quoted_string","\"host\""],["]","]"],["==","=="],["quoted_string","\"www.cloudflare.com\""]]
+
+"http.headers[\"host\"] contains \"abc\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access (quoted_string))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.headers"],["[","["],["quoted_string","\"host\""],["]","]"],["contains","contains"],["quoted_string","\"abc\""]]
+
+"http.headers[\"missing\"] != \"example.org\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access (quoted_string))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.headers"],["[","["],["quoted_string","\"missing\""],["]","]"],["!=","!="],["quoted_string","\"example.org\""]]
+
+"http.headers[\"missing\"] != http.cookies[0]"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access (quoted_string))) operator: (comparison_operator) right: (reference_expression name: (identifier) index: (index_access (integer)))))
+[["identifier","http.headers"],["[","["],["quoted_string","\"missing\""],["]","]"],["!=","!="],["identifier","http.cookies"],["[","["],["integer","0"],["]","]"]]
+
+"http.headers[\"missing\"] <= http.cookies[0]"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access (quoted_string))) operator: (comparison_operator) right: (reference_expression name: (identifier) index: (index_access (integer)))))
+[["identifier","http.headers"],["[","["],["quoted_string","\"missing\""],["]","]"],["<=","<="],["identifier","http.cookies"],["[","["],["integer","0"],["]","]"]]
+
+"http.headers[\"missing\"] == \"example.org\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access (quoted_string))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.headers"],["[","["],["quoted_string","\"missing\""],["]","]"],["==","=="],["quoted_string","\"example.org\""]]
+
+"http.headers[\"missing\"] == http.cookies[0]"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access (quoted_string))) operator: (comparison_operator) right: (reference_expression name: (identifier) index: (index_access (integer)))))
+[["identifier","http.headers"],["[","["],["quoted_string","\"missing\""],["]","]"],["==","=="],["identifier","http.cookies"],["[","["],["integer","0"],["]","]"]]
+
+"http.headers[\"missing\"] >= http.cookies[0]"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access (quoted_string))) operator: (comparison_operator) right: (reference_expression name: (identifier) index: (index_access (integer)))))
+[["identifier","http.headers"],["[","["],["quoted_string","\"missing\""],["]","]"],[">=",">="],["identifier","http.cookies"],["[","["],["integer","0"],["]","]"]]
+
+"http.headers[*] == \"three\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.headers"],["[","["],["*","*"],["]","]"],["==","=="],["quoted_string","\"three\""]]
+
+"http.host != http.other_host"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","http.host"],["!=","!="],["identifier","http.other_host"]]
+
+"http.host < 12"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","http.host"],["<","<"],["integer","12"]]
+
+"http.host < 12:13"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (byte_string)))
+[["identifier","http.host"],["<","<"],["byte_string","12:13"]]
+
+"http.host < http.other_host"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","http.host"],["<","<"],["identifier","http.other_host"]]
+
+"http.host <= http.other_host"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","http.host"],["<=","<="],["identifier","http.other_host"]]
+
+"http.host == \"10.10.10.10\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.host"],["==","=="],["quoted_string","\"10.10.10.10\""]]
+
+"http.host == \"example.org\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.host"],["==","=="],["quoted_string","\"example.org\""]]
+
+"http.host == \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.host"],["==","=="],["quoted_string","\"test\""]]
+
+"http.host == 10.10.10.10"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","http.host"],["==","=="],["ip_address","10.10.10.10"]]
+
+"http.host == ab.cd"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","http.host"],["==","=="],["identifier","ab.cd"]]
+
+"http.host == ab.cdint"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","http.host"],["==","=="],["identifier","ab.cdint"]]
+
+"http.host == ab:cd"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (byte_string)))
+[["identifier","http.host"],["==","=="],["byte_string","ab:cd"]]
+
+"http.host == echo(http.other_host)"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier))))))
+[["identifier","http.host"],["==","=="],["identifier","echo"],["(","("],["identifier","http.other_host"],[")",")"]]
+
+"http.host == http.cookies[*]"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier) index: (index_access))))
+[["identifier","http.host"],["==","=="],["identifier","http.cookies"],["[","["],["*","*"],["]","]"]]
+
+"http.host == http.cookies[0]"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier) index: (index_access (integer)))))
+[["identifier","http.host"],["==","=="],["identifier","http.cookies"],["[","["],["integer","0"],["]","]"]]
+
+"http.host == http.other_host"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","http.host"],["==","=="],["identifier","http.other_host"]]
+
+"http.host == r and ssl"
+(source_file (logical_expression left: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))) right: (reference_expression name: (identifier))))
+[["identifier","http.host"],["==","=="],["identifier","r"],["and","and"],["identifier","ssl"]]
+
+"http.host == r\"literal\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (raw_string)))
+[["identifier","http.host"],["==","=="],["raw_string","r\"literal\""]]
+
+"http.host == r###\"ab\"###"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (raw_string)))
+[["identifier","http.host"],["==","=="],["raw_string","r###\"ab\"###"]]
+
+"http.host == tcp.limit"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","http.host"],["==","=="],["identifier","tcp.limit"]]
+
+"http.host > http.other_host"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","http.host"],[">",">"],["identifier","http.other_host"]]
+
+"http.host >= 10:20:30:40:50:60:70:80"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (byte_string)))
+[["identifier","http.host"],[">=",">="],["byte_string","10:20:30:40:50:60:70:80"]]
+
+"http.host >= http.other_host"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","http.host"],[">=",">="],["identifier","http.other_host"]]
+
+"http.host contains \"abc\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.host"],["contains","contains"],["quoted_string","\"abc\""]]
+
+"http.host contains 6F:72:67"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (byte_string)))
+[["identifier","http.host"],["contains","contains"],["byte_string","6F:72:67"]]
+
+"http.host in $test"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (list_reference)))
+[["identifier","http.host"],["in","in"],["list_reference","$test"]]
+
+"http.host in { \"example.org\" \"example.com\" }"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (quoted_string) (quoted_string))))
+[["identifier","http.host"],["in","in"],["{","{"],["quoted_string","\"example.org\""],["quoted_string","\"example.com\""],["}","}"]]
+
+"http.host matches r###\"a.b\"###"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (raw_string)))
+[["identifier","http.host"],["matches","matches"],["raw_string","r###\"a.b\"###"]]
+
+"http.host strict wildcard \"?\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.host"],["strict wildcard","strict wildcard"],["quoted_string","\"?\""]]
+
+"http.host strict wildcard \"\\xaa\\x22\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.host"],["strict wildcard","strict wildcard"],["quoted_string","\"\\xaa\\x22\""]]
+
+"http.host strict wildcard \"a\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.host"],["strict wildcard","strict wildcard"],["quoted_string","\"a\""]]
+
+"http.host strict wildcard \"fo\\x6f\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.host"],["strict wildcard","strict wildcard"],["quoted_string","\"fo\\x6f\""]]
+
+"http.host strict wildcard \"foo?*\\\\*\\\\\\\\\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.host"],["strict wildcard","strict wildcard"],["quoted_string","\"foo?*\\\\*\\\\\\\\\""]]
+
+"http.host strict wildcard \"¯\\\\\\\\_(ツ*)_/¯\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.host"],["strict wildcard","strict wildcard"],["quoted_string","\"¯\\\\\\\\_(ツ*)_/¯\""]]
+
+"http.host strict wildcard r\"foo?*\\*\\\\\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (raw_string)))
+[["identifier","http.host"],["strict wildcard","strict wildcard"],["raw_string","r\"foo?*\\*\\\\\""]]
+
+"http.host strict wildcard r\"¯\\\\_(ツ*)_/¯\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (raw_string)))
+[["identifier","http.host"],["strict wildcard","strict wildcard"],["raw_string","r\"¯\\\\_(ツ*)_/¯\""]]
+
+"http.host strict wildcard r#\"foo?*\\*\\\\\"#"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (raw_string)))
+[["identifier","http.host"],["strict wildcard","strict wildcard"],["raw_string","r#\"foo?*\\*\\\\\"#"]]
+
+"http.host strict wildcard r##\"foo*\\*\\\\\"##"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (raw_string)))
+[["identifier","http.host"],["strict wildcard","strict wildcard"],["raw_string","r##\"foo*\\*\\\\\"##"]]
+
+"http.host wildcard \"?\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.host"],["wildcard","wildcard"],["quoted_string","\"?\""]]
+
+"http.host wildcard \"\\xaa\\x22\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.host"],["wildcard","wildcard"],["quoted_string","\"\\xaa\\x22\""]]
+
+"http.host wildcard \"a\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.host"],["wildcard","wildcard"],["quoted_string","\"a\""]]
+
+"http.host wildcard \"fo\\x6f\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.host"],["wildcard","wildcard"],["quoted_string","\"fo\\x6f\""]]
+
+"http.host wildcard \"foo?*\\\\*\\\\\\\\\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.host"],["wildcard","wildcard"],["quoted_string","\"foo?*\\\\*\\\\\\\\\""]]
+
+"http.host wildcard \"¯\\\\\\\\_(ツ*)_/¯\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.host"],["wildcard","wildcard"],["quoted_string","\"¯\\\\\\\\_(ツ*)_/¯\""]]
+
+"http.host wildcard r\"foo?*\\*\\\\\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (raw_string)))
+[["identifier","http.host"],["wildcard","wildcard"],["raw_string","r\"foo?*\\*\\\\\""]]
+
+"http.host wildcard r\"¯\\\\_(ツ*)_/¯\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (raw_string)))
+[["identifier","http.host"],["wildcard","wildcard"],["raw_string","r\"¯\\\\_(ツ*)_/¯\""]]
+
+"http.host wildcard r#\"foo?*\\*\\\\\"#"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (raw_string)))
+[["identifier","http.host"],["wildcard","wildcard"],["raw_string","r#\"foo?*\\*\\\\\"#"]]
+
+"http.host wildcard r##\"foo*\\*\\\\\"##"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (raw_string)))
+[["identifier","http.host"],["wildcard","wildcard"],["raw_string","r##\"foo*\\*\\\\\"##"]]
+
+"http.host[*] == \"three\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.host"],["[","["],["*","*"],["]","]"],["==","=="],["quoted_string","\"three\""]]
+
+"http.other_host != echo(http.other_host)"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier))))))
+[["identifier","http.other_host"],["!=","!="],["identifier","echo"],["(","("],["identifier","http.other_host"],[")",")"]]
+
+"http.other_host == echo(http.other_host)"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier))))))
+[["identifier","http.other_host"],["==","=="],["identifier","echo"],["(","("],["identifier","http.other_host"],[")",")"]]
+
+"http.parts[*][*] == \"[5][5]\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access) index: (index_access)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.parts"],["[","["],["*","*"],["]","]"],["[","["],["*","*"],["]","]"],["==","=="],["quoted_string","\"[5][5]\""]]
+
+"http.parts[*][5] == \"[5][5]\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access) index: (index_access (integer))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.parts"],["[","["],["*","*"],["]","]"],["[","["],["integer","5"],["]","]"],["==","=="],["quoted_string","\"[5][5]\""]]
+
+"http.parts[5][*] == \"[5][5]\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access (integer)) index: (index_access)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.parts"],["[","["],["integer","5"],["]","]"],["[","["],["*","*"],["]","]"],["==","=="],["quoted_string","\"[5][5]\""]]
+
+"http.request.headers.names[*] == \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.request.headers.names"],["[","["],["*","*"],["]","]"],["==","=="],["quoted_string","\"test\""]]
+
+"http.user_agent contains \"Googlebot\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","http.user_agent"],["contains","contains"],["quoted_string","\"Googlebot\""]]
+
+"http.user_agent ~ \"(?i)googlebot/\\d+\\.\\d+\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (regex_string)))
+[["identifier","http.user_agent"],["~","~"],["regex_string","\"(?i)googlebot/\\d+\\.\\d+\""]]
+
+"http.user_agent ~ \"Googlebot\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (regex_string)))
+[["identifier","http.user_agent"],["~","~"],["regex_string","\"Googlebot\""]]
+
+"int.lhs != int.rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","int.lhs"],["!=","!="],["identifier","int.rhs"]]
+
+"int.lhs < int.rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","int.lhs"],["<","<"],["identifier","int.rhs"]]
+
+"int.lhs <= int.rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","int.lhs"],["<=","<="],["identifier","int.rhs"]]
+
+"int.lhs == int.rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","int.lhs"],["==","=="],["identifier","int.rhs"]]
+
+"int.lhs > int.rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","int.lhs"],[">",">"],["identifier","int.rhs"]]
+
+"int.lhs >= int.rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","int.lhs"],[">=",">="],["identifier","int.rhs"]]
+
+"ip in {\"test\"}"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (quoted_string))))
+[["identifier","ip"],["in","in"],["{","{"],["quoted_string","\"test\""],["}","}"]]
+
+"ip in {666}"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (integer))))
+[["identifier","ip"],["in","in"],["{","{"],["integer","666"],["}","}"]]
+
+"ip.addr != ip.limit"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","ip.addr"],["!=","!="],["identifier","ip.limit"]]
+
+"ip.addr < ip.limit"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","ip.addr"],["<","<"],["identifier","ip.limit"]]
+
+"ip.addr <= 10:20:30:40:50:60:70:80"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (byte_string)))
+[["identifier","ip.addr"],["<=","<="],["byte_string","10:20:30:40:50:60:70:80"]]
+
+"ip.addr <= ip.limit"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","ip.addr"],["<=","<="],["identifier","ip.limit"]]
+
+"ip.addr == 10.10.10.10"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","ip.addr"],["==","=="],["ip_address","10.10.10.10"]]
+
+"ip.addr == 173.245.48.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","ip.addr"],["==","=="],["ip_address","173.245.48.1"]]
+
+"ip.addr == 192.0.2.1or ssl"
+(source_file (logical_expression left: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)) right: (reference_expression name: (identifier))))
+[["identifier","ip.addr"],["==","=="],["ip_address","192.0.2.1"],["or","or"],["identifier","ssl"]]
+
+"ip.addr == 2606:4700:4700::1111"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","ip.addr"],["==","=="],["ip_address","2606:4700:4700::1111"]]
+
+"ip.addr == ab::cd"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","ip.addr"],["==","=="],["ip_address","ab::cd"]]
+
+"ip.addr == echo_ip(ip.limit)"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier))))))
+[["identifier","ip.addr"],["==","=="],["identifier","echo_ip"],["(","("],["identifier","ip.limit"],[")",")"]]
+
+"ip.addr == http.host"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","ip.addr"],["==","=="],["identifier","http.host"]]
+
+"ip.addr == ip.addrs[0]"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier) index: (index_access (integer)))))
+[["identifier","ip.addr"],["==","=="],["identifier","ip.addrs"],["[","["],["integer","0"],["]","]"]]
+
+"ip.addr == ip.limit"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","ip.addr"],["==","=="],["identifier","ip.limit"]]
+
+"ip.addr > ip.limit"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","ip.addr"],[">",">"],["identifier","ip.limit"]]
+
+"ip.addr >= 173.245.48.0 && ip.addr < 173.245.49.0"
+(source_file (logical_expression left: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)) right: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address))))
+[["identifier","ip.addr"],[">=",">="],["ip_address","173.245.48.0"],["&&","&&"],["identifier","ip.addr"],["<","<"],["ip_address","173.245.49.0"]]
+
+"ip.addr >= 2606:4700:: && ip.addr < 2606:4701::"
+(source_file (logical_expression left: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)) right: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address))))
+[["identifier","ip.addr"],[">=",">="],["ip_address","2606:4700::"],["&&","&&"],["identifier","ip.addr"],["<","<"],["ip_address","2606:4701::"]]
+
+"ip.addr >= ip.limit"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","ip.addr"],[">=",">="],["identifier","ip.limit"]]
+
+"ip.addr in { 103.21.244.0/22 2405:8100::/32 104.16.0.0/12 2803:f800::/32 131.0.72.0/22 173.245.48.0/20 2405:b500::/32 172.64.0.0/13 190.93.240.0/20 103.22.200.0/22 2606:4700::/32 198.41.128.0/17 197.234.240.0/22 162.158.0.0/15 108.162.192.0/18 2c0f:f248::/32 2400:cb00::/32 103.31.4.0/22 2a06:98c0::/29 141.101.64.0/18 188.114.96.0/20 }"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (ip_address) (ip_address) (ip_address) (ip_address) (ip_address) (ip_address) (ip_address) (ip_address) (ip_address) (ip_address) (ip_address) (ip_address) (ip_address) (ip_address) (ip_address) (ip_address) (ip_address) (ip_address) (ip_address) (ip_address) (ip_address))))
+[["identifier","ip.addr"],["in","in"],["{","{"],["ip_address","103.21.244.0/22"],["ip_address","2405:8100::/32"],["ip_address","104.16.0.0/12"],["ip_address","2803:f800::/32"],["ip_address","131.0.72.0/22"],["ip_address","173.245.48.0/20"],["ip_address","2405:b500::/32"],["ip_address","172.64.0.0/13"],["ip_address","190.93.240.0/20"],["ip_address","103.22.200.0/22"],["ip_address","2606:4700::/32"],["ip_address","198.41.128.0/17"],["ip_address","197.234.240.0/22"],["ip_address","162.158.0.0/15"],["ip_address","108.162.192.0/18"],["ip_address","2c0f:f248::/32"],["ip_address","2400:cb00::/32"],["ip_address","103.31.4.0/22"],["ip_address","2a06:98c0::/29"],["ip_address","141.101.64.0/18"],["ip_address","188.114.96.0/20"],["}","}"]]
+
+"ip.addr in { 127.0.0.0/8 ::1 10.0.0.0..10.0.255.255 }"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (ip_address) (ip_address) (range_literal (ip_address) (ip_address)))))
+[["identifier","ip.addr"],["in","in"],["{","{"],["ip_address","127.0.0.0/8"],["ip_address","::1"],["ip_address","10.0.0.0"],["..",".."],["ip_address","10.0.255.255"],["}","}"]]
+
+"ip.addr[*] == 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","ip.addr"],["[","["],["*","*"],["]","]"],["==","=="],["ip_address","127.0.0.1"]]
+
+"ip.addrs[*] < ip.limit"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","ip.addrs"],["[","["],["*","*"],["]","]"],["<","<"],["identifier","ip.limit"]]
+
+"ip.geoip.country == \"GB\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","ip.geoip.country"],["==","=="],["quoted_string","\"GB\""]]
+
+"ip.geoip.country in { \"AT\" \"BE\" \"BG\" \"HR\" \"CY\" \"CZ\" \"DK\" \"EE\" \"FI\" \"FR\" \"DE\" \"GR\" \"HU\" \"IE\" \"IT\" \"LV\" \"LT\" \"LU\" \"MT\" \"NL\" \"PL\" \"PT\" \"RO\" \"SK\" \"SI\" \"ES\" \"SE\" \"GB\" \"GF\" \"GP\" \"MQ\" \"ME\" \"YT\" \"RE\" \"MF\" \"GI\" \"AX\" \"PM\" \"GL\" \"BL\" \"SX\" \"AW\" \"CW\" \"WF\" \"PF\" \"NC\" \"TF\" \"AI\" \"BM\" \"IO\" \"VG\" \"KY\" \"FK\" \"MS\" \"PN\" \"SH\" \"GS\" \"TC\" \"AD\" \"LI\" \"MC\" \"SM\" \"VA\" \"JE\" \"GG\" \"GI\" \"CH\" }"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string) (quoted_string))))
+[["identifier","ip.geoip.country"],["in","in"],["{","{"],["quoted_string","\"AT\""],["quoted_string","\"BE\""],["quoted_string","\"BG\""],["quoted_string","\"HR\""],["quoted_string","\"CY\""],["quoted_string","\"CZ\""],["quoted_string","\"DK\""],["quoted_string","\"EE\""],["quoted_string","\"FI\""],["quoted_string","\"FR\""],["quoted_string","\"DE\""],["quoted_string","\"GR\""],["quoted_string","\"HU\""],["quoted_string","\"IE\""],["quoted_string","\"IT\""],["quoted_string","\"LV\""],["quoted_string","\"LT\""],["quoted_string","\"LU\""],["quoted_string","\"MT\""],["quoted_string","\"NL\""],["quoted_string","\"PL\""],["quoted_string","\"PT\""],["quoted_string","\"RO\""],["quoted_string","\"SK\""],["quoted_string","\"SI\""],["quoted_string","\"ES\""],["quoted_string","\"SE\""],["quoted_string","\"GB\""],["quoted_string","\"GF\""],["quoted_string","\"GP\""],["quoted_string","\"MQ\""],["quoted_string","\"ME\""],["quoted_string","\"YT\""],["quoted_string","\"RE\""],["quoted_string","\"MF\""],["quoted_string","\"GI\""],["quoted_string","\"AX\""],["quoted_string","\"PM\""],["quoted_string","\"GL\""],["quoted_string","\"BL\""],["quoted_string","\"SX\""],["quoted_string","\"AW\""],["quoted_string","\"CW\""],["quoted_string","\"WF\""],["quoted_string","\"PF\""],["quoted_string","\"NC\""],["quoted_string","\"TF\""],["quoted_string","\"AI\""],["quoted_string","\"BM\""],["quoted_string","\"IO\""],["quoted_string","\"VG\""],["quoted_string","\"KY\""],["quoted_string","\"FK\""],["quoted_string","\"MS\""],["quoted_string","\"PN\""],["quoted_string","\"SH\""],["quoted_string","\"GS\""],["quoted_string","\"TC\""],["quoted_string","\"AD\""],["quoted_string","\"LI\""],["quoted_string","\"MC\""],["quoted_string","\"SM\""],["quoted_string","\"VA\""],["quoted_string","\"JE\""],["quoted_string","\"GG\""],["quoted_string","\"GI\""],["quoted_string","\"CH\""],["}","}"]]
+
+"ip.lhs != ip.rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","ip.lhs"],["!=","!="],["identifier","ip.rhs"]]
+
+"ip.lhs < ip.rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","ip.lhs"],["<","<"],["identifier","ip.rhs"]]
+
+"ip.lhs <= ip.rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","ip.lhs"],["<=","<="],["identifier","ip.rhs"]]
+
+"ip.lhs == ip.rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","ip.lhs"],["==","=="],["identifier","ip.rhs"]]
+
+"ip.lhs > ip.rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","ip.lhs"],[">",">"],["identifier","ip.rhs"]]
+
+"ip.lhs >= ip.rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","ip.lhs"],[">=",">="],["identifier","ip.rhs"]]
+
+"ip.src in $bad"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (list_reference)))
+[["identifier","ip.src"],["in","in"],["list_reference","$bad"]]
+
+"len(http.cookies[*])[*] > 3"
+(source_file (comparison_expression left: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access))) index: (index_access)) operator: (comparison_operator) right: (integer)))
+[["identifier","len"],["(","("],["identifier","http.cookies"],["[","["],["*","*"],["]","]"],[")",")"],["[","["],["*","*"],["]","]"],[">",">"],["integer","3"]]
+
+"len(http.request.headers.names[*])"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access)))))
+[["identifier","len"],["(","("],["identifier","http.request.headers.names"],["[","["],["*","*"],["]","]"],[")",")"]]
+
+"lhs != rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","lhs"],["!=","!="],["identifier","rhs"]]
+
+"lhs & rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","lhs"],["&","&"],["identifier","rhs"]]
+
+"lowercase(http.headers[*])"
+(source_file (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) index: (index_access)))))
+[["identifier","lowercase"],["(","("],["identifier","http.headers"],["[","["],["*","*"],["]","]"],[")",")"]]
+
+"lowercase(http.host) == \"example.org\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","lowercase"],["(","("],["identifier","http.host"],[")",")"],["==","=="],["quoted_string","\"example.org\""]]
+
+"map[\"\"] != \"\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access (quoted_string))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","map"],["[","["],["quoted_string","\"\""],["]","]"],["!=","!="],["quoted_string","\"\""]]
+
+"map[\"a\"]"
+(source_file (reference_expression name: (identifier) index: (index_access (quoted_string))))
+[["identifier","map"],["[","["],["quoted_string","\"a\""],["]","]"]]
+
+"map[\"😍\"]"
+(source_file (reference_expression name: (identifier) index: (index_access (quoted_string))))
+[["identifier","map"],["[","["],["quoted_string","\"😍\""],["]","]"]]
+
+"map[a]"
+(source_file (reference_expression name: (identifier)) (ERROR (UNEXPECTED ']')))
+[["identifier","map"],["[","["],["ERROR","a"],["]","]"]]
+
+"not (http.other_host != echo(http.other_host))"
+(source_file (unary_expression argument: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier))))))))
+[["not","not"],["(","("],["identifier","http.other_host"],["!=","!="],["identifier","echo"],["(","("],["identifier","http.other_host"],[")",")"],[")",")"]]
+
+"not (http.other_host == echo(http.other_host))"
+(source_file (unary_expression argument: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier))))))))
+[["not","not"],["(","("],["identifier","http.other_host"],["==","=="],["identifier","echo"],["(","("],["identifier","http.other_host"],[")",")"],[")",")"]]
+
+"not (not tcp.flags.syn)"
+(source_file (unary_expression argument: (parenthesized_expression (unary_expression argument: (reference_expression name: (identifier))))))
+[["not","not"],["(","("],["not","not"],["identifier","tcp.flags.syn"],[")",")"]]
+
+"not (tcp.dstport eq 80)"
+(source_file (unary_expression argument: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))))
+[["not","not"],["(","("],["identifier","tcp.dstport"],["eq","eq"],["integer","80"],[")",")"]]
+
+"not (tcp.dstport ne 80)"
+(source_file (unary_expression argument: (parenthesized_expression (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))))
+[["not","not"],["(","("],["identifier","tcp.dstport"],["ne","ne"],["integer","80"],[")",")"]]
+
+"not any(values[*] == \"HIT\")"
+(source_file (unary_expression argument: (reference_expression name: (identifier) arguments: (argument_list (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (quoted_string))))))
+[["not","not"],["identifier","any"],["(","("],["identifier","values"],["[","["],["*","*"],["]","]"],["==","=="],["quoted_string","\"HIT\""],[")",")"]]
+
+"not at"
+(source_file (unary_expression argument: (reference_expression name: (identifier))))
+[["not","not"],["identifier","at"]]
+
+"not t"
+(source_file (unary_expression argument: (reference_expression name: (identifier))))
+[["not","not"],["identifier","t"]]
+
+"not t && f"
+(source_file (logical_expression left: (unary_expression argument: (reference_expression name: (identifier))) right: (reference_expression name: (identifier))))
+[["not","not"],["identifier","t"],["&&","&&"],["identifier","f"]]
+
+"not tcp.flags.syn"
+(source_file (unary_expression argument: (reference_expression name: (identifier))))
+[["not","not"],["identifier","tcp.flags.syn"]]
+
+"num == 10 or\nnum == true or\nnum == 20"
+(source_file (logical_expression left: (logical_expression left: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)) right: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier)))) right: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer))))
+[["identifier","num"],["==","=="],["integer","10"],["or","or"],["identifier","num"],["==","=="],["identifier","true"],["or","or"],["identifier","num"],["==","=="],["integer","20"]]
+
+"num == 10 or\nnum == true or\nnum == 20\n"
+(source_file (logical_expression left: (logical_expression left: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)) right: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier)))) right: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer))))
+[["identifier","num"],["==","=="],["integer","10"],["or","or"],["identifier","num"],["==","=="],["identifier","true"],["or","or"],["identifier","num"],["==","=="],["integer","20"]]
+
+"num eq \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","num"],["eq","eq"],["quoted_string","\"test\""]]
+
+"num eq 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","num"],["eq","eq"],["ip_address","127.0.0.1"]]
+
+"num ge \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","num"],["ge","ge"],["quoted_string","\"test\""]]
+
+"num ge 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","num"],["ge","ge"],["ip_address","127.0.0.1"]]
+
+"num gt \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","num"],["gt","gt"],["quoted_string","\"test\""]]
+
+"num gt 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","num"],["gt","gt"],["ip_address","127.0.0.1"]]
+
+"num in {"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (MISSING "}"))))
+[["identifier","num"],["in","in"],["{","{"],["}",""]]
+
+"num in {\"test\"}"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (quoted_string))))
+[["identifier","num"],["in","in"],["{","{"],["quoted_string","\"test\""],["}","}"]]
+
+"num in {127.0.0.1}"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (ip_address))))
+[["identifier","num"],["in","in"],["{","{"],["ip_address","127.0.0.1"],["}","}"]]
+
+"num le \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","num"],["le","le"],["quoted_string","\"test\""]]
+
+"num le 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","num"],["le","le"],["ip_address","127.0.0.1"]]
+
+"num lt \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","num"],["lt","lt"],["quoted_string","\"test\""]]
+
+"num lt 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","num"],["lt","lt"],["ip_address","127.0.0.1"]]
+
+"num ne \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","num"],["ne","ne"],["quoted_string","\"test\""]]
+
+"num ne 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","num"],["ne","ne"],["ip_address","127.0.0.1"]]
+
+"num1 >     41 && num2 == 1337 &&    ip1 != 192.168.0.1 and str2 ~ \"yo\\d+\"    && map1[\"key\"] == 42   "
+(source_file (logical_expression left: (logical_expression left: (logical_expression left: (logical_expression left: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)) right: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer))) right: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address))) right: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (regex_string))) right: (comparison_expression left: (reference_expression name: (identifier) index: (index_access (quoted_string))) operator: (comparison_operator) right: (integer))))
+[["identifier","num1"],[">",">"],["integer","41"],["&&","&&"],["identifier","num2"],["==","=="],["integer","1337"],["&&","&&"],["identifier","ip1"],["!=","!="],["ip_address","192.168.0.1"],["and","and"],["identifier","str2"],["~","~"],["regex_string","\"yo\\d+\""],["&&","&&"],["identifier","map1"],["[","["],["quoted_string","\"key\""],["]","]"],["==","=="],["integer","42"]]
+
+"num1 > 3 && str2 == \"abc\""
+(source_file (logical_expression left: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)) right: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string))))
+[["identifier","num1"],[">",">"],["integer","3"],["&&","&&"],["identifier","str2"],["==","=="],["quoted_string","\"abc\""]]
+
+"num1 > 41 && num2 == 1337"
+(source_file (logical_expression left: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)) right: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer))))
+[["identifier","num1"],[">",">"],["integer","41"],["&&","&&"],["identifier","num2"],["==","=="],["integer","1337"]]
+
+"num1 > 41 && num2 == 1337 && ip1 != 192.168.0.1 && str2 ~ \"yo\\d+\" && map1[\"key\"] == 42"
+(source_file (logical_expression left: (logical_expression left: (logical_expression left: (logical_expression left: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)) right: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer))) right: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address))) right: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (regex_string))) right: (comparison_expression left: (reference_expression name: (identifier) index: (index_access (quoted_string))) operator: (comparison_operator) right: (integer))))
+[["identifier","num1"],[">",">"],["integer","41"],["&&","&&"],["identifier","num2"],["==","=="],["integer","1337"],["&&","&&"],["identifier","ip1"],["!=","!="],["ip_address","192.168.0.1"],["&&","&&"],["identifier","str2"],["~","~"],["regex_string","\"yo\\d+\""],["&&","&&"],["identifier","map1"],["[","["],["quoted_string","\"key\""],["]","]"],["==","=="],["integer","42"]]
+
+"num1 in $numbers && num2 == 1337 && str2 != \"hi\" && ip2 == 10.10.10.10"
+(source_file (logical_expression left: (logical_expression left: (logical_expression left: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (list_reference)) right: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer))) right: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string))) right: (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address))))
+[["identifier","num1"],["in","in"],["list_reference","$numbers"],["&&","&&"],["identifier","num2"],["==","=="],["integer","1337"],["&&","&&"],["identifier","str2"],["!=","!="],["quoted_string","\"hi\""],["&&","&&"],["identifier","ip2"],["==","=="],["ip_address","10.10.10.10"]]
+
+"regex_replace(http.host, r\"a\"#, \"b\") eq \"c\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)) (raw_string) (ERROR (UNEXPECTED '#')) (quoted_string))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","regex_replace"],["(","("],["identifier","http.host"],[",",","],["raw_string","r\"a\""],["ERROR","#"],[",",","],["quoted_string","\"b\""],[")",")"],["eq","eq"],["quoted_string","\"c\""]]
+
+"regex_replace(http.host, r\"this is a r##raw## string\", r\"this is a new r##raw## string\") eq \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)) (raw_string) (raw_string))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","regex_replace"],["(","("],["identifier","http.host"],[",",","],["raw_string","r\"this is a r##raw## string\""],[",",","],["raw_string","r\"this is a new r##raw## string\""],[")",")"],["eq","eq"],["quoted_string","\"test\""]]
+
+"regex_replace(http.host, r#\"a\", \"b\") eq \"c\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)) (reference_expression name: (identifier)) (ERROR (UNEXPECTED '#')) (quoted_string))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","regex_replace"],["(","("],["identifier","http.host"],[",",","],["identifier","r"],["ERROR","#\"a\""],[",",","],["quoted_string","\"b\""],[")",")"],["eq","eq"],["quoted_string","\"c\""]]
+
+"regex_replace(http.host, r##\"a\"#, \"b\") eq \"c\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)) (reference_expression name: (identifier)) (ERROR (UNEXPECTED '#')) (quoted_string))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","regex_replace"],["(","("],["identifier","http.host"],[",",","],["identifier","r"],["ERROR","##\"a\"#"],[",",","],["quoted_string","\"b\""],[")",")"],["eq","eq"],["quoted_string","\"c\""]]
+
+"regex_replace(http.host, r###\"this is a r##\"raw\"## string\"###, r###\"this is a new r##\"raw\"## string\"###) eq \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)) (raw_string) (raw_string))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","regex_replace"],["(","("],["identifier","http.host"],[",",","],["raw_string","r###\"this is a r##\"raw\"## string\"###"],[",",","],["raw_string","r###\"this is a new r##\"raw\"## string\"###"],[")",")"],["eq","eq"],["quoted_string","\"test\""]]
+
+"ssl"
+(source_file (reference_expression name: (identifier)))
+[["identifier","ssl"]]
+
+"ssl[*]"
+(source_file (reference_expression name: (identifier) index: (index_access)))
+[["identifier","ssl"],["[","["],["*","*"],["]","]"]]
+
+"str eq 0"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str"],["eq","eq"],["integer","0"]]
+
+"str eq 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","str"],["eq","eq"],["ip_address","127.0.0.1"]]
+
+"str eq 256"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str"],["eq","eq"],["integer","256"]]
+
+"str ge 0"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str"],["ge","ge"],["integer","0"]]
+
+"str ge 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","str"],["ge","ge"],["ip_address","127.0.0.1"]]
+
+"str ge 256"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str"],["ge","ge"],["integer","256"]]
+
+"str gt 0"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str"],["gt","gt"],["integer","0"]]
+
+"str gt 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","str"],["gt","gt"],["ip_address","127.0.0.1"]]
+
+"str gt 256"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str"],["gt","gt"],["integer","256"]]
+
+"str in {"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (MISSING "}"))))
+[["identifier","str"],["in","in"],["{","{"],["}",""]]
+
+"str in {\"a\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (quoted_string) (MISSING "}"))))
+[["identifier","str"],["in","in"],["{","{"],["quoted_string","\"a\""],["}",""]]
+
+"str in {0}"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (integer))))
+[["identifier","str"],["in","in"],["{","{"],["integer","0"],["}","}"]]
+
+"str in {127.0.0.1}"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (ip_address))))
+[["identifier","str"],["in","in"],["{","{"],["ip_address","127.0.0.1"],["}","}"]]
+
+"str le 0"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str"],["le","le"],["integer","0"]]
+
+"str le 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","str"],["le","le"],["ip_address","127.0.0.1"]]
+
+"str le 256"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str"],["le","le"],["integer","256"]]
+
+"str lt 0"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str"],["lt","lt"],["integer","0"]]
+
+"str lt 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","str"],["lt","lt"],["ip_address","127.0.0.1"]]
+
+"str lt 256"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str"],["lt","lt"],["integer","256"]]
+
+"str ne 0"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str"],["ne","ne"],["integer","0"]]
+
+"str ne 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","str"],["ne","ne"],["ip_address","127.0.0.1"]]
+
+"str ne 256"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str"],["ne","ne"],["integer","256"]]
+
+"str_arr eq \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","str_arr"],["eq","eq"],["quoted_string","\"test\""]]
+
+"str_arr eq 0"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str_arr"],["eq","eq"],["integer","0"]]
+
+"str_arr eq 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","str_arr"],["eq","eq"],["ip_address","127.0.0.1"]]
+
+"str_arr ge \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","str_arr"],["ge","ge"],["quoted_string","\"test\""]]
+
+"str_arr ge 0"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str_arr"],["ge","ge"],["integer","0"]]
+
+"str_arr ge 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","str_arr"],["ge","ge"],["ip_address","127.0.0.1"]]
+
+"str_arr gt \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","str_arr"],["gt","gt"],["quoted_string","\"test\""]]
+
+"str_arr gt 0"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str_arr"],["gt","gt"],["integer","0"]]
+
+"str_arr gt 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","str_arr"],["gt","gt"],["ip_address","127.0.0.1"]]
+
+"str_arr in {\"test\"}"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (quoted_string))))
+[["identifier","str_arr"],["in","in"],["{","{"],["quoted_string","\"test\""],["}","}"]]
+
+"str_arr in {0}"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (integer))))
+[["identifier","str_arr"],["in","in"],["{","{"],["integer","0"],["}","}"]]
+
+"str_arr in {127.0.0.1}"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (ip_address))))
+[["identifier","str_arr"],["in","in"],["{","{"],["ip_address","127.0.0.1"],["}","}"]]
+
+"str_arr le \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","str_arr"],["le","le"],["quoted_string","\"test\""]]
+
+"str_arr le 0"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str_arr"],["le","le"],["integer","0"]]
+
+"str_arr le 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","str_arr"],["le","le"],["ip_address","127.0.0.1"]]
+
+"str_arr lt \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","str_arr"],["lt","lt"],["quoted_string","\"test\""]]
+
+"str_arr lt 0"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str_arr"],["lt","lt"],["integer","0"]]
+
+"str_arr lt 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","str_arr"],["lt","lt"],["ip_address","127.0.0.1"]]
+
+"str_arr ne \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","str_arr"],["ne","ne"],["quoted_string","\"test\""]]
+
+"str_arr ne 0"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str_arr"],["ne","ne"],["integer","0"]]
+
+"str_arr ne 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","str_arr"],["ne","ne"],["ip_address","127.0.0.1"]]
+
+"str_map eq \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","str_map"],["eq","eq"],["quoted_string","\"test\""]]
+
+"str_map eq 0"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str_map"],["eq","eq"],["integer","0"]]
+
+"str_map eq 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","str_map"],["eq","eq"],["ip_address","127.0.0.1"]]
+
+"str_map ge \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","str_map"],["ge","ge"],["quoted_string","\"test\""]]
+
+"str_map ge 0"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str_map"],["ge","ge"],["integer","0"]]
+
+"str_map ge 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","str_map"],["ge","ge"],["ip_address","127.0.0.1"]]
+
+"str_map gt \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","str_map"],["gt","gt"],["quoted_string","\"test\""]]
+
+"str_map gt 0"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str_map"],["gt","gt"],["integer","0"]]
+
+"str_map gt 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","str_map"],["gt","gt"],["ip_address","127.0.0.1"]]
+
+"str_map in {\"test\"}"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (quoted_string))))
+[["identifier","str_map"],["in","in"],["{","{"],["quoted_string","\"test\""],["}","}"]]
+
+"str_map in {0}"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (integer))))
+[["identifier","str_map"],["in","in"],["{","{"],["integer","0"],["}","}"]]
+
+"str_map in {127.0.0.1}"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (ip_address))))
+[["identifier","str_map"],["in","in"],["{","{"],["ip_address","127.0.0.1"],["}","}"]]
+
+"str_map le \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","str_map"],["le","le"],["quoted_string","\"test\""]]
+
+"str_map le 0"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str_map"],["le","le"],["integer","0"]]
+
+"str_map le 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","str_map"],["le","le"],["ip_address","127.0.0.1"]]
+
+"str_map lt \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","str_map"],["lt","lt"],["quoted_string","\"test\""]]
+
+"str_map lt 0"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str_map"],["lt","lt"],["integer","0"]]
+
+"str_map lt 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","str_map"],["lt","lt"],["ip_address","127.0.0.1"]]
+
+"str_map ne \"test\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","str_map"],["ne","ne"],["quoted_string","\"test\""]]
+
+"str_map ne 0"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","str_map"],["ne","ne"],["integer","0"]]
+
+"str_map ne 127.0.0.1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (ip_address)))
+[["identifier","str_map"],["ne","ne"],["ip_address","127.0.0.1"]]
+
+"t"
+(source_file (reference_expression name: (identifier)))
+[["identifier","t"]]
+
+"t and (t or (t and t))"
+(source_file (logical_expression left: (reference_expression name: (identifier)) right: (parenthesized_expression (logical_expression left: (reference_expression name: (identifier)) right: (parenthesized_expression (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier))))))))
+[["identifier","t"],["and","and"],["(","("],["identifier","t"],["or","or"],["(","("],["identifier","t"],["and","and"],["identifier","t"],[")",")"],[")",")"]]
+
+"t and (t or t)"
+(source_file (logical_expression left: (reference_expression name: (identifier)) right: (parenthesized_expression (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier))))))
+[["identifier","t"],["and","and"],["(","("],["identifier","t"],["or","or"],["identifier","t"],[")",")"]]
+
+"t and af"
+(source_file (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier))))
+[["identifier","t"],["and","and"],["identifier","af"]]
+
+"t and f"
+(source_file (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier))))
+[["identifier","t"],["and","and"],["identifier","f"]]
+
+"t and t"
+(source_file (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier))))
+[["identifier","t"],["and","and"],["identifier","t"]]
+
+"t or af"
+(source_file (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier))))
+[["identifier","t"],["or","or"],["identifier","af"]]
+
+"t or f"
+(source_file (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier))))
+[["identifier","t"],["or","or"],["identifier","f"]]
+
+"t or t && t and t or t ^^ t and t || t"
+(source_file (logical_expression left: (logical_expression left: (logical_expression left: (reference_expression name: (identifier)) right: (logical_expression left: (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier))) right: (reference_expression name: (identifier)))) right: (logical_expression left: (reference_expression name: (identifier)) right: (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier))))) right: (reference_expression name: (identifier))))
+[["identifier","t"],["or","or"],["identifier","t"],["&&","&&"],["identifier","t"],["and","and"],["identifier","t"],["or","or"],["identifier","t"],["^^","^^"],["identifier","t"],["and","and"],["identifier","t"],["||","||"],["identifier","t"]]
+
+"t xor af"
+(source_file (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier))))
+[["identifier","t"],["xor","xor"],["identifier","af"]]
+
+"t xor f"
+(source_file (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier))))
+[["identifier","t"],["xor","xor"],["identifier","f"]]
+
+"tcp.flags.syn"
+(source_file (reference_expression name: (identifier)))
+[["identifier","tcp.flags.syn"]]
+
+"tcp.optional != tcp.limit"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","tcp.optional"],["!=","!="],["identifier","tcp.limit"]]
+
+"tcp.port              ==80"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","tcp.port"],["==","=="],["integer","80"]]
+
+"tcp.port != tcp.limit"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","tcp.port"],["!=","!="],["identifier","tcp.limit"]]
+
+"tcp.port & 1"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","tcp.port"],["&","&"],["integer","1"]]
+
+"tcp.port & tcp.limit"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","tcp.port"],["&","&"],["identifier","tcp.limit"]]
+
+"tcp.port < 8000"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","tcp.port"],["<","<"],["integer","8000"]]
+
+"tcp.port < _tcp_limit"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","tcp.port"],["<","<"],["identifier","_tcp_limit"]]
+
+"tcp.port < tcp.limit"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","tcp.port"],["<","<"],["identifier","tcp.limit"]]
+
+"tcp.port <= tcp.limit"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","tcp.port"],["<=","<="],["identifier","tcp.limit"]]
+
+"tcp.port == \"wirefilter\""
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","tcp.port"],["==","=="],["quoted_string","\"wirefilter\""]]
+
+"tcp.port == 80"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","tcp.port"],["==","=="],["integer","80"]]
+
+"tcp.port == http.host"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","tcp.port"],["==","=="],["identifier","http.host"]]
+
+"tcp.port == len(http.host)"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier))))))
+[["identifier","tcp.port"],["==","=="],["identifier","len"],["(","("],["identifier","http.host"],[")",")"]]
+
+"tcp.port == tcp.limit"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","tcp.port"],["==","=="],["identifier","tcp.limit"]]
+
+"tcp.port == tcp.ports[*]"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier) index: (index_access))))
+[["identifier","tcp.port"],["==","=="],["identifier","tcp.ports"],["[","["],["*","*"],["]","]"]]
+
+"tcp.port == tcp.ports[0]"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier) index: (index_access (integer)))))
+[["identifier","tcp.port"],["==","=="],["identifier","tcp.ports"],["[","["],["integer","0"],["]","]"]]
+
+"tcp.port > tcp.limit"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","tcp.port"],[">",">"],["identifier","tcp.limit"]]
+
+"tcp.port >= 1024"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (integer)))
+[["identifier","tcp.port"],[">=",">="],["integer","1024"]]
+
+"tcp.port >= tcp.limit"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","tcp.port"],[">=",">="],["identifier","tcp.limit"]]
+
+"tcp.port in $even"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (list_reference)))
+[["identifier","tcp.port"],["in","in"],["list_reference","$even"]]
+
+"tcp.port in $odd"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (list_reference)))
+[["identifier","tcp.port"],["in","in"],["list_reference","$odd"]]
+
+"tcp.port in { 80 443 2082..2083 }"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (integer) (integer) (range_literal (integer) (integer)))))
+[["identifier","tcp.port"],["in","in"],["{","{"],["integer","80"],["integer","443"],["integer","2082"],["..",".."],["integer","2083"],["}","}"]]
+
+"tcp.port in { 80 8080 8880 2052 2082 2086 2095 }"
+(source_file (comparison_expression left: (reference_expression name: (identifier)) operator: (comparison_operator) right: (set_literal (integer) (integer) (integer) (integer) (integer) (integer) (integer))))
+[["identifier","tcp.port"],["in","in"],["{","{"],["integer","80"],["integer","8080"],["integer","8880"],["integer","2052"],["integer","2082"],["integer","2086"],["integer","2095"],["}","}"]]
+
+"tcp.port[*] == 80"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (integer)))
+[["identifier","tcp.port"],["[","["],["*","*"],["]","]"],["==","=="],["integer","80"]]
+
+"tcp.ports[*] >= counting_limit()"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (reference_expression name: (identifier) arguments: (argument_list))))
+[["identifier","tcp.ports"],["[","["],["*","*"],["]","]"],[">=",">="],["identifier","counting_limit"],["(","("],[")",")"]]
+
+"tcp.ports[*] >= tcp.limit"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","tcp.ports"],["[","["],["*","*"],["]","]"],[">=",">="],["identifier","tcp.limit"]]
+
+"test2[*][*]"
+(source_file (reference_expression name: (identifier) index: (index_access) index: (index_access)))
+[["identifier","test2"],["[","["],["*","*"],["]","]"],["[","["],["*","*"],["]","]"]]
+
+"test2[*][*][*]"
+(source_file (reference_expression name: (identifier) index: (index_access) index: (index_access) index: (index_access)))
+[["identifier","test2"],["[","["],["*","*"],["]","]"],["[","["],["*","*"],["]","]"],["[","["],["*","*"],["]","]"]]
+
+"test2[*][*][0]"
+(source_file (reference_expression name: (identifier) index: (index_access) index: (index_access) index: (index_access (integer))))
+[["identifier","test2"],["[","["],["*","*"],["]","]"],["[","["],["*","*"],["]","]"],["[","["],["integer","0"],["]","]"]]
+
+"test2[*][0]"
+(source_file (reference_expression name: (identifier) index: (index_access) index: (index_access (integer))))
+[["identifier","test2"],["[","["],["*","*"],["]","]"],["[","["],["integer","0"],["]","]"]]
+
+"test2[*][0][*]"
+(source_file (reference_expression name: (identifier) index: (index_access) index: (index_access (integer)) index: (index_access)))
+[["identifier","test2"],["[","["],["*","*"],["]","]"],["[","["],["integer","0"],["]","]"],["[","["],["*","*"],["]","]"]]
+
+"test2[0][*]"
+(source_file (reference_expression name: (identifier) index: (index_access (integer)) index: (index_access)))
+[["identifier","test2"],["[","["],["integer","0"],["]","]"],["[","["],["*","*"],["]","]"]]
+
+"test2[0][*][*]"
+(source_file (reference_expression name: (identifier) index: (index_access (integer)) index: (index_access) index: (index_access)))
+[["identifier","test2"],["[","["],["integer","0"],["]","]"],["[","["],["*","*"],["]","]"],["[","["],["*","*"],["]","]"]]
+
+"test[-1]"
+(source_file (reference_expression name: (identifier) index: (index_access (integer))))
+[["identifier","test"],["[","["],["integer","-1"],["]","]"]]
+
+"test[0]"
+(source_file (reference_expression name: (identifier) index: (index_access (integer))))
+[["identifier","test"],["[","["],["integer","0"],["]","]"]]
+
+"test[1]"
+(source_file (reference_expression name: (identifier) index: (index_access (integer))))
+[["identifier","test"],["[","["],["integer","1"],["]","]"]]
+
+"test[99999]"
+(source_file (reference_expression name: (identifier) index: (index_access (integer))))
+[["identifier","test"],["[","["],["integer","99999"],["]","]"]]
+
+"test[9999]"
+(source_file (reference_expression name: (identifier) index: (index_access (integer))))
+[["identifier","test"],["[","["],["integer","9999"],["]","]"]]
+
+"test[999]"
+(source_file (reference_expression name: (identifier) index: (index_access (integer))))
+[["identifier","test"],["[","["],["integer","999"],["]","]"]]
+
+"test[99]"
+(source_file (reference_expression name: (identifier) index: (index_access (integer))))
+[["identifier","test"],["[","["],["integer","99"],["]","]"]]
+
+"test[a]"
+(source_file (reference_expression name: (identifier)) (ERROR (UNEXPECTED ']')))
+[["identifier","test"],["[","["],["ERROR","a"],["]","]"]]
+
+"uppercase(lowercase(http.host)) == \"EXAMPLE.ORG\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier) arguments: (argument_list (reference_expression name: (identifier)))))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","uppercase"],["(","("],["identifier","lowercase"],["(","("],["identifier","http.host"],[")",")"],[")",")"],["==","=="],["quoted_string","\"EXAMPLE.ORG\""]]
+
+"values"
+(source_file (reference_expression name: (identifier)))
+[["identifier","values"]]
+
+"values[*] != rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","values"],["[","["],["*","*"],["]","]"],["!=","!="],["identifier","rhs"]]
+
+"values[*] & rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","values"],["[","["],["*","*"],["]","]"],["&","&"],["identifier","rhs"]]
+
+"values[*] < rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","values"],["[","["],["*","*"],["]","]"],["<","<"],["identifier","rhs"]]
+
+"values[*] <= rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","values"],["[","["],["*","*"],["]","]"],["<=","<="],["identifier","rhs"]]
+
+"values[*] == rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","values"],["[","["],["*","*"],["]","]"],["==","=="],["identifier","rhs"]]
+
+"values[*] > rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","values"],["[","["],["*","*"],["]","]"],[">",">"],["identifier","rhs"]]
+
+"values[*] >= rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","values"],["[","["],["*","*"],["]","]"],[">=",">="],["identifier","rhs"]]
+
+"values[*][*] != rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access) index: (index_access)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","values"],["[","["],["*","*"],["]","]"],["[","["],["*","*"],["]","]"],["!=","!="],["identifier","rhs"]]
+
+"values[*][*] & rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access) index: (index_access)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","values"],["[","["],["*","*"],["]","]"],["[","["],["*","*"],["]","]"],["&","&"],["identifier","rhs"]]
+
+"values[*][*] < rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access) index: (index_access)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","values"],["[","["],["*","*"],["]","]"],["[","["],["*","*"],["]","]"],["<","<"],["identifier","rhs"]]
+
+"values[*][*] <= rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access) index: (index_access)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","values"],["[","["],["*","*"],["]","]"],["[","["],["*","*"],["]","]"],["<=","<="],["identifier","rhs"]]
+
+"values[*][*] == rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access) index: (index_access)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","values"],["[","["],["*","*"],["]","]"],["[","["],["*","*"],["]","]"],["==","=="],["identifier","rhs"]]
+
+"values[*][*] > rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access) index: (index_access)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","values"],["[","["],["*","*"],["]","]"],["[","["],["*","*"],["]","]"],[">",">"],["identifier","rhs"]]
+
+"values[*][*] >= rhs"
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access) index: (index_access)) operator: (comparison_operator) right: (reference_expression name: (identifier))))
+[["identifier","values"],["[","["],["*","*"],["]","]"],["[","["],["*","*"],["]","]"],[">=",">="],["identifier","rhs"]]
+
+"values[0] == \"HIT\""
+(source_file (comparison_expression left: (reference_expression name: (identifier) index: (index_access (integer))) operator: (comparison_operator) right: (quoted_string)))
+[["identifier","values"],["[","["],["integer","0"],["]","]"],["==","=="],["quoted_string","\"HIT\""]]
+
+"xyz"
+(source_file (reference_expression name: (identifier)))
+[["identifier","xyz"]]
+
+"xyz\n"
+(source_file (reference_expression name: (identifier)))
+[["identifier","xyz"]]
+

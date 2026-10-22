@@ -24,7 +24,9 @@ cargo install --path topiary --locked
 npm test
 ```
 
-`npm test` runs the Tree-sitter corpus, Rust tests, scanner boundary cases, offline upstream conformance fixtures, and generated formatting cases. Exact formatter goldens live under `tests/`; both native and browser formatting use them. The formatter checks syntax, idempotence, and concrete-tree/token preservation before returning output.
+`npm test` runs the Tree-sitter corpus, Rust tests (including 408 upstream expression snapshots), scanner boundary cases, offline upstream conformance fixtures, and generated formatting cases. Exact formatter goldens live under `tests/`; both native and browser formatting use them. The formatter checks syntax, idempotence, and concrete-tree/token preservation before returning output.
+
+The [upstream example corpus](../tree-sitter-wirefilter/tests/upstream-examples/README.md) runs natively in Rust, with concrete-tree and literal-token snapshots. Tree-sitter also has its own expected-tree corpus under `tree-sitter-wirefilter/test/corpus/`.
 
 The offline conformance fixtures run against Tree-sitter. To verify their expectations against upstream's Rust implementation, run the separate `npm run test:upstream` command described in [conformance](conformance.md).
 

@@ -13,7 +13,8 @@ Document intentional syntax approximations and verify changes against upstream.
 
 - `tree-sitter-wirefilter/grammar.js`: grammar and precedence.
 - `tree-sitter-wirefilter/src/scanner.c`: external raw-string scanner.
-- `tree-sitter-wirefilter/test/corpus/`: parser tree regression cases.
+- `tree-sitter-wirefilter/test/corpus/`: Tree-sitter parser tree regression cases.
+- `tree-sitter-wirefilter/tests/upstream-examples/`: pinned upstream inputs and Rust CST/token snapshots.
 - `tree-sitter-wirefilter/queries/highlights.scm`: highlighting queries.
 - `tree-sitter-wirefilter/bindings/rust/`: minimal Rust grammar bindings.
 - `topiary/src/`: optional native formatter library and CLI.
