@@ -54,7 +54,10 @@ fn stdin_and_file_input_match_the_library() {
 #[test]
 fn options_and_argument_errors_do_not_need_input() {
     assert!(String::from_utf8_lossy(&run(&["--help"], "").stdout).contains("Usage: wirefilter-fmt"));
-    assert_eq!(run(&["--version"], "").stdout, b"wirefilter-fmt 0.1.0\n");
+    assert_eq!(
+        run(&["--version"], "").stdout,
+        concat!("wirefilter-fmt ", env!("CARGO_PKG_VERSION"), "\n").as_bytes()
+    );
     let output = run(&["-", "extra"], "");
     assert!(!output.status.success());
     assert!(output.stdout.is_empty());

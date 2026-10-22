@@ -11,10 +11,14 @@ pub type Error = Box<dyn std::error::Error + Send + Sync>;
 /// This checks syntax and idempotence, not names or types against a Wirefilter
 /// Scheme. The grammar and default four-space formatting policy are embedded.
 pub fn format(source: &str) -> Result<String, Error> {
+    format_with_query(source, include_str!("../queries/formatting.scm"))
+}
+
+fn format_with_query(source: &str, query: &str) -> Result<String, Error> {
     let before = signature(source)?;
     let grammar = tree_sitter_wirefilter::LANGUAGE.into();
     let language = Language {
-        formatting_query: TopiaryQuery::new(&grammar, include_str!("../queries/formatting.scm"))
+        formatting_query: TopiaryQuery::new(&grammar, query)
             .map_err(|error| format!("invalid formatting query: {error}"))?,
         name: "wirefilter".into(),
         grammar,
@@ -104,7 +108,21 @@ fn signature(source: &str) -> Result<Vec<Node<'_>>, Error> {
 
 #[cfg(test)]
 mod tests {
-    use super::signature;
+    use super::{format_with_query, signature};
+
+    #[test]
+    fn formatting_rejects_stable_rules_that_change_tokens() {
+        let uppercase = format!(
+            "{}\n(quoted_string) @upper_case",
+            include_str!("../queries/formatting.scm")
+        );
+        for (source, query) in [("a and b", ""), ("body eq \"keep me\"", uppercase.as_str())] {
+            assert_eq!(
+                format_with_query(source, query).unwrap_err().to_string(),
+                "formatting changed expression syntax or token contents"
+            );
+        }
+    }
 
     #[test]
     fn integrity_guard_preserves_operators_literals_grouping_and_completeness() {

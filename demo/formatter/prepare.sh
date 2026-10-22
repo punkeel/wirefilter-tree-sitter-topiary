@@ -9,14 +9,9 @@ if [[ ! -f "$archive" ]]; then
   mv "$archive.tmp" "$archive"
 fi
 printf '%s  %s\n' "$checksum" "$archive" | sha256sum --check --status
-patch_hash="$(sha256sum topiary-core.patch)"
-if [[ -f vendor/topiary-core/.patched ]] && [[ "$(cat vendor/topiary-core/.patched)" == "$checksum $patch_hash" ]]; then
-  exit 0
-fi
 stage="$(mktemp -d target/topiary-core.XXXXXX)"
 trap 'rm -rf "$stage"' EXIT
 tar -xzf "$archive" --strip-components=1 -C "$stage"
 patch --batch --fuzz=0 -d "$stage" -p1 < topiary-core.patch
-printf '%s\n' "$checksum $patch_hash" > "$stage/.patched"
 rm -rf vendor/topiary-core
 mv "$stage" vendor/topiary-core

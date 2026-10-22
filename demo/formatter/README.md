@@ -7,7 +7,7 @@ formatter. It is independent of the native Cargo workspace.
 and applies `topiary-core.patch` to an ignored build dependency under `vendor/`.
 Only the compatibility patch is maintained here; the downloaded source and its
 MIT license stay together. The first build needs network access; subsequent
-builds reuse the archive under `target/`. The script requires curl, sha256sum,
+builds reuse the archive under `target/` and reapply the patch to fresh source. The script requires curl, sha256sum,
 tar, and patch, in addition to the demo's documented prerequisites.
 
 The patch adapts diagnostics to the WASM facade's non-Copy Range and missing
