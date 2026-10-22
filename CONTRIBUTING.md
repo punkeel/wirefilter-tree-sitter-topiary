@@ -10,6 +10,6 @@ This repository provides syntax tooling for [Cloudflare Wirefilter](https://gith
 4. Run `npm test` and, for integrated changes, `npm run demo:test`, which includes a production build. When changing syntax expectations, also run `npm run test:upstream` against the pinned checkout described in the conformance guide.
 5. Keep commits focused and report the checks you ran, including any checks you could not run.
 
-Use the same Topiary query in native and browser formatting. Keep parser artifacts aligned across both runtimes. Do not introduce Scheme-dependent validation into a syntax-only success indicator; document any intentional approximation against upstream.
+Keep the grammar usable on its own. Avoid adding formatter or demo dependencies to it. Use the same Topiary query in native and browser formatting. Keep parser artifacts aligned across both runtimes. Do not introduce Scheme-dependent validation into a syntax-only success indicator; document any intentional approximation against upstream.
 
 See [AGENTS.md](AGENTS.md) for the full development rules. Dependencies, generated binaries, build caches, credentials, and local deployment state must stay out of commits.

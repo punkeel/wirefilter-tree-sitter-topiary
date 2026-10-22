@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
-    "test": "bash ../scripts/test-demo.sh",
+    "test": "bash test.sh",
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {

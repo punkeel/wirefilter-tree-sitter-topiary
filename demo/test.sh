@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-./scripts/build-demo.sh
+cargo build --locked -p wirefilter-format
+./demo/build.sh
 cd demo
 ./node_modules/.bin/playwright test

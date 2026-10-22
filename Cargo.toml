@@ -1,0 +1,5 @@
+[workspace]
+members = ["tree-sitter-wirefilter", "topiary"]
+default-members = ["tree-sitter-wirefilter"]
+exclude = ["demo/formatter"]
+resolver = "2"

@@ -3,11 +3,11 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { generatedExpressions } from '../../tests/generated-expressions.mjs';
 
-const configuration = fileURLToPath(new URL('../../topiary/languages.ncl', import.meta.url));
+const formatter = fileURLToPath(new URL('../../target/debug/wirefilter-fmt', import.meta.url));
 
 test('generated expressions preserve the concrete tree and every token in native and WASM formatting', async ({ page }) => {
   const native = generatedExpressions.map(({ name, source }) => {
-    const result = spawnSync('topiary', ['-C', configuration, 'format', '--language', 'wirefilter'], {
+    const result = spawnSync(formatter, [], {
       input: source, encoding: 'utf8',
     });
     expect(result.status, `${name}: ${result.stderr}`).toBe(0);

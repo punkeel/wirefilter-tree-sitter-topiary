@@ -1,0 +1,90 @@
+--- a/src/error/error_span.rs
++++ b/src/error/error_span.rs
+@@ -86,0 +87,4 @@
++        // The native facade's Range is Copy, while the wasm facade's Range is
++        // Clone-only. Compute the miette span before storing the value so both
++        // facades retain the same diagnostic coordinates.
++        self.span = Some((range.start_byte() as usize..=range.end_byte() as usize).into());
+@@ -88 +91,0 @@
+-        self.span = Some((range.start_byte() as usize..=range.end_byte() as usize).into());
+@@ -117 +120 @@
+-        } else if let Some(range) = self.range {
++        } else if let Some(range) = &self.range {
+--- a/src/error/mod.rs
++++ b/src/error/mod.rs
+@@ -182 +181,0 @@
+-    let range = err.range;
+@@ -184,5 +183,20 @@
+-    report!(err)
+-        .attach_range(range)
+-        .attach_label(label)
+-        .attach_language("tree_sitter_query".into())
+-}
++
++    // The wasm facade intentionally exposes no query-error byte range. Keep
++    // the native diagnostic's source range unchanged, and retain the useful
++    // message/label on wasm.
++    #[cfg(not(target_arch = "wasm32"))]
++    {
++        let range = err.range;
++        report!(err)
++            .attach_range(range)
++            .attach_label(label)
++            .attach_language("tree_sitter_query".into())
++    }
++
++    #[cfg(target_arch = "wasm32")]
++    {
++        report!(err)
++            .attach_label(label)
++            .attach_language("tree_sitter_query".into())
++    }
++}
+--- a/src/tree_sitter.rs
++++ b/src/tree_sitter.rs
+@@ -205,10 +205,23 @@
+-        let language_name = query
+-            .query
+-            .property_settings(query_match.pattern_index())
+-            .into_iter()
+-            .find_map(|p| {
+-                (&*p.key == "injection.language")
+-                    .then_some(p.value.as_ref())
+-                    .flatten()
+-            })
+-            .map(|s| s.to_string())
++        // The wasm facade does not expose Query::property_settings. Dynamic
++        // @injection.language captures still work below; native keeps the
++        // original #set! injection.language behavior.
++        let language_name = {
++            #[cfg(not(target_arch = "wasm32"))]
++            {
++                query
++                    .query
++                    .property_settings(query_match.pattern_index())
++                    .into_iter()
++                    .find_map(|p| {
++                        (&*p.key == "injection.language")
++                            .then_some(p.value.as_ref())
++                            .flatten()
++                    })
++                    .map(|s| s.to_string())
++            }
++
++            #[cfg(target_arch = "wasm32")]
++            {
++                None
++            }
++        }
+@@ -667,0 +681,8 @@
++        // The wasm facade does not expose Node::language_name. Native keeps
++        // attaching the grammar name; wasm reports the range and parse error
++        // without that optional language attachment.
++        #[cfg(not(target_arch = "wasm32"))]
++        let language_name = node.language_name();
++        #[cfg(target_arch = "wasm32")]
++        let language_name = None;
++
+@@ -670 +691 @@
+-            .attach_language(node.language_name()));
++            .attach_language(language_name));

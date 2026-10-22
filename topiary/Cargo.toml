@@ -1,0 +1,19 @@
+[package]
+name = "wirefilter-format"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Native Wirefilter formatter"
+
+[lib]
+name = "wirefilter_format"
+path = "src/lib.rs"
+
+[[bin]]
+name = "wirefilter-fmt"
+path = "src/main.rs"
+
+[dependencies]
+topiary-core = "=0.8.0"
+tree-sitter = "=0.26.12"
+tree-sitter-wirefilter = { path = "../tree-sitter-wirefilter" }

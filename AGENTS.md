@@ -2,8 +2,9 @@
 
 ## Scope and source of truth
 
-This repository provides a syntax-only Tree-sitter parser and a Topiary formatter
-for Cloudflare Wirefilter. Upstream `cloudflare/wirefilter` Rust lexers and parser
+The Tree-sitter grammar is the primary package. Keep the codebase small; the
+Topiary Rust library/CLI is optional, and demo tooling stays under `demo/`.
+This repository provides syntax tooling for Cloudflare Wirefilter. Upstream `cloudflare/wirefilter` Rust lexers and parser
 are the language reference. Do not claim that accepting a syntax tree validates
 field names, types, arity, regexes, IP addresses, or other Scheme-dependent rules.
 Document intentional syntax approximations and verify changes against upstream.
@@ -14,7 +15,9 @@ Document intentional syntax approximations and verify changes against upstream.
 - `tree-sitter-wirefilter/src/scanner.c`: external raw-string scanner.
 - `tree-sitter-wirefilter/test/corpus/`: parser tree regression cases.
 - `tree-sitter-wirefilter/queries/highlights.scm`: highlighting queries.
-- `topiary/queries/formatting.scm`: actual Topiary formatting policy.
+- `tree-sitter-wirefilter/bindings/rust/`: minimal Rust grammar bindings.
+- `topiary/src/`: optional native formatter library and CLI.
+- `topiary/queries/formatting.scm`: shared Topiary formatting policy.
 - `tests/`: regression checks and formatter goldens.
 - `demo/`: browser playground and Workers deployment source.
 

@@ -3,7 +3,7 @@ target/
 *.so
 *.dylib
 *.dll
-.openai/*.local.*
+.openai/
 demo/dist/
 demo/.wrangler/
 *.wasm
@@ -16,3 +16,5 @@ demo/playwright-report/
 /dist/
 
 /.wrangler/
+
+/demo/formatter/vendor/

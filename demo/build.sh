@@ -9,6 +9,7 @@ docker run --rm -u "$(id -u):$(id -g)" -v "$PWD:/src" \
   emcc -Os -s WASM=1 -s SIDE_MODULE=2 \
   -s EXPORTED_FUNCTIONS='["_tree_sitter_wirefilter"]' -fno-exceptions \
   -I src src/parser.c src/scanner.c -o /src/demo/public/tree-sitter-wirefilter.wasm
+bash demo/formatter/prepare.sh
 cargo build --locked --manifest-path demo/formatter/Cargo.toml \
   --target wasm32-unknown-unknown --release
 wasm-bindgen --target web --out-dir demo/formatter/pkg \
