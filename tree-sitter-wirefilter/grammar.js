@@ -103,7 +103,6 @@ module.exports = grammar({
     _comparison_rhs: $ => choice(
       $.set_literal,
       $.list_reference,
-      $.range_literal,
       $._scalar_literal,
       $.reference_expression,
     ),
@@ -128,7 +127,7 @@ module.exports = grammar({
 
     // List names are lowercase ASCII/digit/underscore/dot in the upstream
     // lexer, e.g. $office_ips or $my.lists.trusted.
-    list_reference: $ => token(/\$[a-z0-9_.]+/),
+    list_reference: $ => token(/\$[a-z0-9_]+(\.[a-z0-9_]+)*/),
 
     // Double-quoted bytes: \", \\, \\xHH and \\OOO are the valid escapes.
     quoted_string: $ => token(/"([^"\\]|\\(["\\]|x[0-9a-fA-F]{2}|[0-7]{3}))*"/),
@@ -145,9 +144,12 @@ module.exports = grammar({
 
     ip_address: $ => token(prec(2, choice(
       // IPv4, optionally CIDR. IPv4 and IPv6 ranges use a separate '..'.
-      /([0-9]{1,3}\.){3}[0-9]{1,3}(\/[0-9]{1,2})?/,
+      /([0-9]{1,3}\.){3}[0-9]{1,3}(\/[0-9]{1,3})?/,
       // IPv6, optionally CIDR, including compressed and IPv4-mapped forms.
-      /([0-9a-fA-F]{0,4}:){2,}((([0-9]{1,3}\.){3}[0-9]{1,3})|[0-9a-fA-F]{0,4})(\/[0-9]{1,3})?/,
+      // Keep each repeated hextet group non-empty. The previous pattern used
+      // a {0,4} hextet inside a repeated group; Tree-sitter could stop before
+      // the second colon and split 2001:db8::/32.
+      /((([0-9a-fA-F]{1,4}:){1,6}(([0-9]{1,3}\.){3}[0-9]{1,3})|((::|([0-9a-fA-F]{1,4}:){1,7}:)([0-9a-fA-F]{1,4}:){0,6}([0-9]{1,3}\.){3}[0-9]{1,3})|(([0-9a-fA-F]{1,4}:){1,7}:([0-9a-fA-F]{1,4}:){0,7}[0-9a-fA-F]{0,4})|(::([0-9a-fA-F]{1,4}:){0,7}[0-9a-fA-F]{0,4})|(([0-9a-fA-F]{1,4}:){2,7}[0-9a-fA-F]{1,4}))(\/[0-9]{1,3})?)/,
     ))),
   },
 });

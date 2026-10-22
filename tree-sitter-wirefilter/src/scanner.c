@@ -30,7 +30,17 @@ bool tree_sitter_wirefilter_external_scanner_scan(void *payload,
                                                   TSLexer *lexer,
                                                   const bool *valid_symbols) {
   (void)payload;
-  if (!valid_symbols[RAW_STRING] || lexer->lookahead != 'r') return false;
+  if (!valid_symbols[RAW_STRING]) return false;
+
+  // Tree-sitter does not apply `extras` before invoking an external scanner.
+  // Match Wirefilter's skip_space() here so raw strings work after an
+  // operator, including when the separator contains a newline.
+  while (lexer->lookahead == ' ' || lexer->lookahead == '\r' ||
+         lexer->lookahead == '\n') {
+    lexer->advance(lexer, true);
+  }
+
+  if (lexer->lookahead != 'r') return false;
 
   lexer->advance(lexer, false); // r
   unsigned hashes = 0;
@@ -41,15 +51,15 @@ bool tree_sitter_wirefilter_external_scanner_scan(void *payload,
   if (lexer->lookahead != '"') return false;
   lexer->advance(lexer, false); // opening quote
 
-  while (lexer->lookahead != 0) {
+  while (!lexer->eof(lexer)) {
     if (lexer->lookahead == '"') {
       lexer->advance(lexer, false);
       unsigned closing_hashes = 0;
-      while (lexer->lookahead == '#') {
+      while (lexer->lookahead == '#' && closing_hashes < hashes) {
         lexer->advance(lexer, false);
         closing_hashes++;
       }
-      if (closing_hashes >= hashes) {
+      if (closing_hashes == hashes) {
         lexer->mark_end(lexer);
         lexer->result_symbol = RAW_STRING;
         return true;

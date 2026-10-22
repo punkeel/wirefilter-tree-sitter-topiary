@@ -1,0 +1,120 @@
+==================
+missing right operand
+==================
+a and
+---
+
+(source_file
+  (logical_expression
+    (reference_expression
+      (identifier))
+    (reference_expression
+      (MISSING identifier))))
+
+==================
+comma in set
+==================
+a in {1, 2}
+---
+
+(source_file
+  (comparison_expression
+    (reference_expression
+      (identifier))
+    (comparison_operator)
+    (set_literal
+      (integer)
+      (ERROR)
+      (integer))))
+
+==================
+invalid list name
+==================
+a in $.office
+---
+
+(source_file
+  (comparison_expression
+    (reference_expression
+      (identifier))
+    (comparison_operator)
+    (ERROR
+      (UNEXPECTED '.'))
+    (reference_expression
+      (identifier))))
+
+==================
+tab is not whitespace
+==================
+a	b
+---
+
+(source_file
+  (ERROR
+    (identifier)
+    (UNEXPECTED '\t'))
+  (reference_expression
+    (identifier)))
+
+==================
+unterminated raw string
+==================
+a contains r#"unterminated
+---
+
+(source_file
+  (comparison_expression
+    (reference_expression
+      (identifier))
+    (comparison_operator)
+    (reference_expression
+      (identifier)))
+  (ERROR
+    (UNEXPECTED '#')))
+
+==================
+invalid quoted escape
+==================
+a contains "\n"
+---
+
+(source_file
+  (comparison_expression
+    (reference_expression
+      (identifier))
+    (comparison_operator)
+    (ERROR
+      (UNEXPECTED 'n'))
+    (reference_expression
+      (identifier)))
+  (ERROR
+    (UNEXPECTED '\0')))
+
+==================
+missing closing index
+==================
+headers["x" eq "a"
+---
+
+(source_file
+  (reference_expression
+    (identifier))
+  (ERROR
+    (quoted_string)
+    (identifier)
+    (quoted_string)))
+
+==================
+range outside set
+==================
+a eq 1..2
+---
+
+(source_file
+  (comparison_expression
+    (reference_expression
+      (identifier))
+    (comparison_operator)
+    (integer))
+  (ERROR
+    (integer)))

@@ -6,8 +6,9 @@
   "license": "MIT",
   "main": "grammar.js",
   "scripts": {
-    "generate": "tree-sitter generate",
-    "build": "tree-sitter build -o wirefilter.so"
+    "generate": "tree-sitter generate --abi 14",
+    "build": "tree-sitter build -o wirefilter.so",
+    "test": "tree-sitter test"
   },
   "tree-sitter": [
     {

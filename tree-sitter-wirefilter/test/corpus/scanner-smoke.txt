@@ -1,0 +1,12 @@
+==================
+raw string
+==================
+x contains r#"a"#
+---
+
+(source_file
+  (comparison_expression
+    (reference_expression
+      (identifier))
+    (comparison_operator)
+    (raw_string)))

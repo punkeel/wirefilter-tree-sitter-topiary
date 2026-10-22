@@ -1,0 +1,199 @@
+==================
+logical precedence
+==================
+a or b xor c and d
+---
+
+(source_file
+  (logical_expression
+    (reference_expression
+      (identifier))
+    (logical_expression
+      (reference_expression
+        (identifier))
+      (logical_expression
+        (reference_expression
+          (identifier))
+        (reference_expression
+          (identifier))))))
+
+==================
+unary comparison precedence
+==================
+not a eq 1 and !b
+---
+
+(source_file
+  (logical_expression
+    (unary_expression
+      (comparison_expression
+        (reference_expression
+          (identifier))
+        (comparison_operator)
+        (integer)))
+    (unary_expression
+      (reference_expression
+        (identifier)))))
+
+==================
+calls and spaced indexes
+==================
+any(not(http.request.headers[ "x" ][ * ] in {"a" "b"})) and lower(http.host)[0] eq "x"
+---
+
+(source_file
+  (logical_expression
+    (reference_expression
+      (identifier)
+      (argument_list
+        (unary_expression
+          (parenthesized_expression
+            (comparison_expression
+              (reference_expression
+                (identifier)
+                (index_access
+                  (quoted_string))
+                (index_access))
+              (comparison_operator)
+              (set_literal
+                (quoted_string)
+                (quoted_string)))))))
+    (comparison_expression
+      (reference_expression
+        (identifier)
+        (argument_list
+          (reference_expression
+            (identifier)))
+        (index_access
+          (integer)))
+      (comparison_operator)
+      (quoted_string))))
+
+==================
+sets and ranges
+==================
+ip.src in {10.0.0.1..10.0.0.254 2001:db8::1..2001:db8::ff 2001:db8::/32}
+---
+
+(source_file
+  (comparison_expression
+    (reference_expression
+      (identifier))
+    (comparison_operator)
+    (set_literal
+      (range_literal
+        (ip_address)
+        (ip_address))
+      (range_literal
+        (ip_address)
+        (ip_address))
+      (ip_address))))
+
+==================
+integer forms
+==================
+tcp.port in {-10 0x10 0123..0125}
+---
+
+(source_file
+  (comparison_expression
+    (reference_expression
+      (identifier))
+    (comparison_operator)
+    (set_literal
+      (integer)
+      (integer)
+      (range_literal
+        (integer)
+        (integer)))))
+
+==================
+contains set and byte string
+==================
+http.host contains {"a" "b"} and http.host contains 01:ab:ff
+---
+
+(source_file
+  (logical_expression
+    (comparison_expression
+      (reference_expression
+        (identifier))
+      (comparison_operator)
+      (set_literal
+        (quoted_string)
+        (quoted_string)))
+    (comparison_expression
+      (reference_expression
+        (identifier))
+      (comparison_operator)
+      (byte_string))))
+
+==================
+raw strings and aliases
+==================
+http.host matches r##"a"#"b"## and http.path wildcard r#"*admin*"#
+---
+
+(source_file
+  (logical_expression
+    (comparison_expression
+      (reference_expression
+        (identifier))
+      (comparison_operator)
+      (raw_string))
+    (comparison_expression
+      (reference_expression
+        (identifier))
+      (comparison_operator)
+      (raw_string))))
+
+==================
+newline-separated raw string
+==================
+http.host contains
+r#"x"#
+---
+
+(source_file
+  (comparison_expression
+    (reference_expression
+      (identifier))
+    (comparison_operator)
+    (raw_string)))
+
+==================
+bare field and list reference
+==================
+ssl and ip.src in $office_ips.trusted
+---
+
+(source_file
+  (logical_expression
+    (reference_expression
+      (identifier))
+    (comparison_expression
+      (reference_expression
+        (identifier))
+      (comparison_operator)
+      (list_reference))))
+
+==================
+compressed IPv6 forms
+==================
+ip.src in {:: ::1 1:: 1::8:9 1:2::8:9 1:2:3:4:5:6:7:: ::ffff:192.0.2.1 1:2:3:4:5:6:192.0.2.1}
+---
+
+(source_file
+  (comparison_expression
+    (reference_expression
+      (identifier))
+    (comparison_operator)
+    (set_literal
+      (ip_address)
+      (ip_address)
+      (ip_address)
+      (ip_address)
+      (ip_address)
+      (ip_address)
+      (ip_address)
+      (ip_address))))
