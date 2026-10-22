@@ -1,1 +1,2 @@
-any(http.request.headers["user-agent"][*] contains r#"/admin path"#) and !tcp.flags & 0x02
+any(http.request.headers["user-agent"][*] contains r#"/admin path"#)
+and !tcp.flags & 0x02

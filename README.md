@@ -34,7 +34,7 @@ The local Topiary registration resolves the shared library relative to `topiary/
 
 ## Browser demo
 
-The browser uses the repository's grammar, highlighting query, and formatting query. Topiary 0.8.0 is compiled to WebAssembly with small, documented compatibility patches in `demo/formatter/vendor/`. Native and browser output are compared against the same golden files. The demo test command rebuilds both WASM modules and the frontend before running Playwright, so it cannot silently use an old build. The formatter retains source multiline structure; it does not implement line-width-driven wrapping.
+The browser uses the repository's grammar, highlighting query, and formatting query. Topiary 0.8.0 is compiled to WebAssembly with small, documented compatibility patches in `demo/formatter/vendor/`. Native and browser output are compared against the same golden files. The demo test command rebuilds both WASM modules and the frontend before running Playwright, so it cannot silently use an old build. Boolean operators (`and`, `or`, `xor`, and their symbolic aliases) always begin a new line, even when the input is one line. Boolean groups and calls with boolean-chain arguments expand with four-space indentation. Simple expressions, calls, and groups stay compact; sets retain their input multiline structure. Literal contents are never reflowed. This is a structural formatting policy, not line-width-driven wrapping.
 
 Building both WASM modules requires Docker, the Rust WASM target, and a matching wasm-bindgen CLI:
 
@@ -50,6 +50,16 @@ npm --prefix demo run dev
 The build uses the pinned `emscripten/emsdk:4.0.15` image. After a WASM build, frontend-only edits need only `npm --prefix demo run build`. Rebuild WASM after grammar, scanner, or Rust changes. Formatting-query and highlighting-query edits are picked up by Vite directly.
 
 The demo includes samples, live syntax errors with line/column locations, a tree with field labels and operators, keyboard formatting (`Ctrl/⌘ + Shift + F`), and copying of output. Syntax errors prevent formatting. Input is limited to 20,000 characters; the tree display is bounded for deeply nested expressions.
+
+For example, `http.request.method eq "GET" and (http.host eq "example.com" or ip.src in $office_ips)` becomes:
+
+```text
+http.request.method eq "GET"
+and (
+    http.host eq "example.com"
+    or ip.src in $office_ips
+)
+```
 
 ## Workers hosting
 

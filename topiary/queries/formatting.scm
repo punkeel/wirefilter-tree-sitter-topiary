@@ -16,28 +16,44 @@
 ; Comparisons, membership, bitwise tests and byte-string matching.
 (comparison_operator) @prepend_space @append_space
 
-; Break boolean chains when the expression needs multiple lines. The spaced
-; softline produces a plain space for compact expressions.
+; Boolean chains always break before the operator, including one-line input.
+; This is a structural layout policy, not a line-width heuristic.
 (logical_expression
-  ["and" "&&" "xor" "^^" "or" "||"] @prepend_spaced_softline @append_space
+  ["and" "&&" "xor" "^^" "or" "||"] @prepend_hardline @append_space
 )
 
 ; Unary keywords require a space; symbolic ! binds tightly.
 (unary_expression "not" @append_space)
 (unary_expression "!" @append_antispace)
 
-; Calls and quantifiers: name(arg1, arg2). Commas are only used here; a
-; Wirefilter set is NOT comma separated.
+; Calls stay compact unless an argument is a boolean chain. Delimiters use
+; explicit structural rules so a newly inserted newline cannot change the
+; formatting policy on a second pass.
 (argument_list
-  "(" @prepend_antispace @append_empty_softline @append_indent_start
-  ")" @prepend_empty_softline @prepend_indent_end @prepend_antispace
+  "(" @prepend_antispace @append_antispace
+  ")" @prepend_antispace
 )
-(argument_list "," @prepend_antispace @append_spaced_softline)
+(argument_list "," @prepend_antispace @append_space)
+(argument_list
+  "(" @append_hardline @append_indent_start
+  (logical_expression)
+  ")" @prepend_hardline @prepend_indent_end
+)
+; Every comma is either before or after a logical argument. Cover both orders
+; so all arguments of such a call occupy separate lines.
+(argument_list (logical_expression) "," @append_hardline)
+(argument_list "," @append_hardline (logical_expression))
 
-; Grouped subexpressions: (a and b), indenting only if multiline.
+; Expand groups that contain a boolean chain; keep simple groups compact.
+; Compact outer wrappers also stay stable around an expanded inner group.
 (parenthesized_expression
-  "(" @append_empty_softline @append_indent_start
-  ")" @prepend_empty_softline @prepend_indent_end
+  "(" @append_antispace
+  ")" @prepend_antispace
+)
+(parenthesized_expression
+  "(" @append_hardline @append_indent_start
+  (logical_expression)
+  ")" @prepend_hardline @prepend_indent_end
 )
 
 ; Indexed fields and calls: headers["name"][*], without internal spaces.

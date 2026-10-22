@@ -29,6 +29,41 @@ test('highlights safely, parses Unicode and reports ERROR and missing nodes', as
   }
 });
 
+test('breaks boolean aliases, keeps simple comparisons compact, and preserves literals', async ({ page }) => {
+  await enginePage(page);
+
+  const booleanSource = 'http.host eq "a" and http.host eq "b" && http.host eq "c" or http.host eq "d" || http.host eq "e" xor http.host eq "f" ^^ http.host eq "g"';
+  const booleanOutput = await page.evaluate(input => window.engine.format(input), booleanSource);
+  for (const operator of ['and', '&&', 'or', '||', 'xor', '^^']) {
+    expect(booleanOutput).toContain(`\n${operator} `);
+  }
+  expect(await page.evaluate(input => window.engine.format(input), booleanOutput)).toBe(booleanOutput);
+
+  expect(await page.evaluate(input => window.engine.format(input), 'http.host eq "example.com"'))
+    .toBe('http.host eq "example.com"\n');
+
+  const nestedSource = '((http.host eq "a" && http.request.method eq "GET") || ip.src eq 192.0.2.1) ^^ http.host eq "b"';
+  const nestedOutput = await page.evaluate(input => window.engine.format(input), nestedSource);
+  expect(nestedOutput).toBe(`(
+    (
+        http.host eq "a"
+        && http.request.method eq "GET"
+    )
+    || ip.src eq 192.0.2.1
+)
+^^ http.host eq "b"
+`);
+
+  const quoted = String.raw`"café  🐈 \x20 \"quoted\""`;
+  const raw = String.raw`r##"raw # text
+  keep  spacing 🦊"##`;
+  const literalSource = `http.host eq ${quoted} && http.path contains ${raw}`;
+  const literalOutput = await page.evaluate(input => window.engine.format(input), literalSource);
+  expect(literalOutput).toContain(quoted);
+  expect(literalOutput).toContain(raw);
+  expect(await page.evaluate(input => window.engine.format(input), literalOutput)).toBe(literalOutput);
+});
+
 const fixtureDir = fileURLToPath(new URL('../../tests/', import.meta.url));
 for (const file of readdirSync(fixtureDir).filter(file => file.endsWith('.input.wirefilter'))) {
   test(`browser Topiary matches native golden: ${file}`, async ({ page }) => {

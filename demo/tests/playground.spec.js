@@ -31,6 +31,27 @@ test('sample selection, live errors, formatting, reset, and keyboard shortcut', 
   expect(errors).toEqual([]);
 });
 
+test('formats the originally single-line operator sample with stable breaks', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#runtime-status-text')).toHaveText('Parser ready');
+  await page.locator('#sample-select').selectOption('operators');
+
+  const source = await page.locator('#source-input').inputValue();
+  expect(source).not.toContain('\n');
+
+  await page.locator('#format-button').click();
+  await expect(page.locator('#format-status')).toHaveText('Formatted just now');
+  const output = await page.locator('#formatted-output').inputValue();
+  for (const operator of ['xor', 'and', 'or']) {
+    expect(output).toContain(`\n${operator} `);
+  }
+  expect(output).toContain('\n    and ');
+  expect(output).toContain('"(?i)bot"');
+
+  await page.locator('#format-button').click();
+  await expect(page.locator('#formatted-output')).toHaveValue(output);
+});
+
 test('mobile layout keeps controls reachable', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');

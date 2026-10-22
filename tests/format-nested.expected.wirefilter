@@ -1,1 +1,8 @@
-(foo eq "x" and (bar eq "y" or not baz contains "z")) xor qux in { 1 2 }
+(
+    foo eq "x"
+    and (
+        bar eq "y"
+        or not baz contains "z"
+    )
+)
+xor qux in { 1 2 }

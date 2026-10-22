@@ -1,0 +1,1 @@
+http.request.method eq "GET" and (http.host eq "example.com" or ip.src in $office_ips)

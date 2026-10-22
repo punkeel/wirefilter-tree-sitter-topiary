@@ -1,0 +1,9 @@
+f(
+    "x",
+    a
+    and b,
+    any(
+        c
+        or d
+    )
+)

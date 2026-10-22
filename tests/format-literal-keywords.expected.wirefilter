@@ -1,0 +1,3 @@
+data eq "a and b || café 🐈"
+and path contains r##"or\and
+  preserve && spacing"##
