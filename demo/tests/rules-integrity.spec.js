@@ -7,8 +7,8 @@ test('rejects stable custom rules that merge tokens or rewrite literals', async 
     await engine.initialize();
     const failures = [];
     for (const [source, query] of [
-      // An empty query produces "nota", which is a valid but different tree.
-      ['not a', ''],
+      // An empty query produces "aandb", a field instead of a boolean chain.
+      ['a and b', ''],
       // Uppercasing is idempotent, but changes the quoted literal's value.
       ['data eq "keep me"', `${engine.defaultFormattingQuery}\n(quoted_string) @upper_case`],
     ]) {

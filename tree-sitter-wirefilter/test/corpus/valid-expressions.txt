@@ -6,16 +6,16 @@ a or b xor c and d
 
 (source_file
   (logical_expression
-    (reference_expression
-      (identifier))
-    (logical_expression
-      (reference_expression
-        (identifier))
-      (logical_expression
-        (reference_expression
-          (identifier))
-        (reference_expression
-          (identifier))))))
+    left: (reference_expression
+      name: (identifier))
+    right: (logical_expression
+      left: (reference_expression
+        name: (identifier))
+      right: (logical_expression
+        left: (reference_expression
+          name: (identifier))
+        right: (reference_expression
+          name: (identifier))))))
 
 ==================
 unary comparison precedence
@@ -25,15 +25,15 @@ not a eq 1 and !b
 
 (source_file
   (logical_expression
-    (unary_expression
-      (comparison_expression
-        (reference_expression
-          (identifier))
-        (comparison_operator)
-        (integer)))
-    (unary_expression
-      (reference_expression
-        (identifier)))))
+    left: (unary_expression
+      argument: (comparison_expression
+        left: (reference_expression
+          name: (identifier))
+        operator: (comparison_operator)
+        right: (integer)))
+    right: (unary_expression
+      argument: (reference_expression
+        name: (identifier)))))
 
 ==================
 calls and spaced indexes
@@ -43,31 +43,31 @@ any(not(http.request.headers[ "x" ][ * ] in {"a" "b"})) and lower(http.host)[0] 
 
 (source_file
   (logical_expression
-    (reference_expression
-      (identifier)
-      (argument_list
+    left: (reference_expression
+      name: (identifier)
+      arguments: (argument_list
         (unary_expression
-          (parenthesized_expression
+          argument: (parenthesized_expression
             (comparison_expression
-              (reference_expression
-                (identifier)
-                (index_access
+              left: (reference_expression
+                name: (identifier)
+                index: (index_access
                   (quoted_string))
-                (index_access))
-              (comparison_operator)
-              (set_literal
+                index: (index_access))
+              operator: (comparison_operator)
+              right: (set_literal
                 (quoted_string)
                 (quoted_string)))))))
-    (comparison_expression
-      (reference_expression
-        (identifier)
-        (argument_list
+    right: (comparison_expression
+      left: (reference_expression
+        name: (identifier)
+        arguments: (argument_list
           (reference_expression
-            (identifier)))
-        (index_access
+            name: (identifier)))
+        index: (index_access
           (integer)))
-      (comparison_operator)
-      (quoted_string))))
+      operator: (comparison_operator)
+      right: (quoted_string))))
 
 ==================
 sets and ranges
@@ -77,10 +77,10 @@ ip.src in {10.0.0.1..10.0.0.254 2001:db8::1..2001:db8::ff 2001:db8::/32}
 
 (source_file
   (comparison_expression
-    (reference_expression
-      (identifier))
-    (comparison_operator)
-    (set_literal
+    left: (reference_expression
+      name: (identifier))
+    operator: (comparison_operator)
+    right: (set_literal
       (range_literal
         (ip_address)
         (ip_address))
@@ -97,10 +97,10 @@ tcp.port in {-10 0x10 0123..0125}
 
 (source_file
   (comparison_expression
-    (reference_expression
-      (identifier))
-    (comparison_operator)
-    (set_literal
+    left: (reference_expression
+      name: (identifier))
+    operator: (comparison_operator)
+    right: (set_literal
       (integer)
       (integer)
       (range_literal
@@ -108,25 +108,25 @@ tcp.port in {-10 0x10 0123..0125}
         (integer)))))
 
 ==================
-contains set and byte string
+membership set and byte string
 ==================
-http.host contains {"a" "b"} and http.host contains 01:ab:ff
+http.host in {"a" "b"} and http.host contains 01:ab:ff
 ---
 
 (source_file
   (logical_expression
-    (comparison_expression
-      (reference_expression
-        (identifier))
-      (comparison_operator)
-      (set_literal
+    left: (comparison_expression
+      left: (reference_expression
+        name: (identifier))
+      operator: (comparison_operator)
+      right: (set_literal
         (quoted_string)
         (quoted_string)))
-    (comparison_expression
-      (reference_expression
-        (identifier))
-      (comparison_operator)
-      (byte_string))))
+    right: (comparison_expression
+      left: (reference_expression
+        name: (identifier))
+      operator: (comparison_operator)
+      right: (byte_string))))
 
 ==================
 raw strings and aliases
@@ -136,16 +136,16 @@ http.host matches r##"a"#"b"## and http.path wildcard r#"*admin*"#
 
 (source_file
   (logical_expression
-    (comparison_expression
-      (reference_expression
-        (identifier))
-      (comparison_operator)
-      (raw_string))
-    (comparison_expression
-      (reference_expression
-        (identifier))
-      (comparison_operator)
-      (raw_string))))
+    left: (comparison_expression
+      left: (reference_expression
+        name: (identifier))
+      operator: (comparison_operator)
+      right: (raw_string))
+    right: (comparison_expression
+      left: (reference_expression
+        name: (identifier))
+      operator: (comparison_operator)
+      right: (raw_string))))
 
 ==================
 newline-separated raw string
@@ -156,10 +156,10 @@ r#"x"#
 
 (source_file
   (comparison_expression
-    (reference_expression
-      (identifier))
-    (comparison_operator)
-    (raw_string)))
+    left: (reference_expression
+      name: (identifier))
+    operator: (comparison_operator)
+    right: (raw_string)))
 
 ==================
 bare field and list reference
@@ -169,13 +169,13 @@ ssl and ip.src in $office_ips.trusted
 
 (source_file
   (logical_expression
-    (reference_expression
-      (identifier))
-    (comparison_expression
-      (reference_expression
-        (identifier))
-      (comparison_operator)
-      (list_reference))))
+    left: (reference_expression
+      name: (identifier))
+    right: (comparison_expression
+      left: (reference_expression
+        name: (identifier))
+      operator: (comparison_operator)
+      right: (list_reference))))
 
 ==================
 compressed IPv6 forms
@@ -185,10 +185,10 @@ ip.src in {:: ::1 1:: 1::8:9 1:2::8:9 1:2:3:4:5:6:7:: ::ffff:192.0.2.1 1:2:3:4:5
 
 (source_file
   (comparison_expression
-    (reference_expression
-      (identifier))
-    (comparison_operator)
-    (set_literal
+    left: (reference_expression
+      name: (identifier))
+    operator: (comparison_operator)
+    right: (set_literal
       (ip_address)
       (ip_address)
       (ip_address)
@@ -206,16 +206,16 @@ a matches "[a-z"\]]+\d{1,10}\"" and b ~ r##"a"#"b"##
 
 (source_file
   (logical_expression
-    (comparison_expression
-      (reference_expression
-        (identifier))
-      (comparison_operator)
-      (regex_string))
-    (comparison_expression
-      (reference_expression
-        (identifier))
-      (comparison_operator)
-      (raw_string))))
+    left: (comparison_expression
+      left: (reference_expression
+        name: (identifier))
+      operator: (comparison_operator)
+      right: (regex_string))
+    right: (comparison_expression
+      left: (reference_expression
+        name: (identifier))
+      operator: (comparison_operator)
+      right: (raw_string))))
 
 ==================
 quoted contains literal
@@ -225,7 +225,61 @@ a contains "plain"
 
 (source_file
   (comparison_expression
-    (reference_expression
-      (identifier))
-    (comparison_operator)
-    (quoted_string)))
+    left: (reference_expression
+      name: (identifier))
+    operator: (comparison_operator)
+    right: (quoted_string)))
+
+==================
+consecutive dots in list names
+==================
+ip.src in $office..ips and http.host in $block...list
+---
+
+(source_file
+  (logical_expression
+    left: (comparison_expression
+      left: (reference_expression
+        name: (identifier))
+      operator: (comparison_operator)
+      right: (list_reference))
+    right: (comparison_expression
+      left: (reference_expression
+        name: (identifier))
+      operator: (comparison_operator)
+      right: (list_reference))))
+
+==================
+negative decimal and index bases
+==================
+n eq -09 and a[0x01] eq b[01] and a[-0] eq b[0]
+---
+
+(source_file
+  (logical_expression
+    left: (logical_expression
+      left: (comparison_expression
+        left: (reference_expression
+          name: (identifier))
+        operator: (comparison_operator)
+        right: (integer))
+      right: (comparison_expression
+        left: (reference_expression
+          name: (identifier)
+          index: (index_access
+            (integer)))
+        operator: (comparison_operator)
+        right: (reference_expression
+          name: (identifier)
+          index: (index_access
+            (integer)))))
+    right: (comparison_expression
+      left: (reference_expression
+        name: (identifier)
+        index: (index_access
+          (integer)))
+      operator: (comparison_operator)
+      right: (reference_expression
+        name: (identifier)
+        index: (index_access
+          (integer))))))

@@ -554,6 +554,10 @@
     "named": false
   },
   {
+    "type": "matches",
+    "named": false
+  },
+  {
     "type": "ne",
     "named": false
   },
@@ -599,6 +603,10 @@
   },
   {
     "type": "}",
+    "named": false
+  },
+  {
+    "type": "~",
     "named": false
   }
 ]

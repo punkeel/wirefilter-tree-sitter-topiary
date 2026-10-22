@@ -18,6 +18,22 @@ const cases = [
   ['unterminated raw', 'x contains r##"hello"#', false],
   ['raw NUL byte', `x contains ${raw(1, 'a\0b')}`, true],
   ['raw Unicode', `x contains ${raw(2, '雪 🦊 "# café')}`, true],
+  ['quoted NUL byte', 'x contains "a\0b"', true],
+  ['quoted NUL map key', 'headers["a\0b"] eq "x"', true],
+  ['quoted control characters', 'x contains "a\r\n\tb"', true],
+  ['empty quoted string', 'x eq ""', true],
+  ['octal byte maximum', String.raw`x eq "\377"`, true],
+  ['overflow octal byte', String.raw`x eq "\400"`, false],
+  ['overflow octal byte maximum', String.raw`x eq "\777"`, false],
+  ['short octal byte', String.raw`x eq "\37"`, false],
+  ['short hex byte', String.raw`x eq "\x1"`, false],
+  ['invalid ordinary escape', String.raw`x eq "\d"`, false],
+  ['regex escape', String.raw`x matches "\d+\s"`, true],
+  ['regex NUL byte', 'x matches "a\0b"', true],
+  ['regex quote in class', 'x matches "["a-z]+"', true],
+  ['regex escaped class close', String.raw`x ~ "[a-z\]]+"`, true],
+  ['unterminated regex class', 'x matches "[abc"', false],
+  ['NUL outside literal', 'x\0', false],
   ['tab before raw', `x contains\t${raw(1, 'hello')}`, false],
 ];
 try {
@@ -28,5 +44,5 @@ try {
     if (result.error) throw result.error;
     assert.equal(result.status === 0, valid, `${name}: ${result.stdout}\n${result.stderr}`);
   }
-  console.log(`PASS ${cases.length} raw-string scanner boundary cases`);
+  console.log(`PASS ${cases.length} literal scanner boundary cases`);
 } finally { rmSync(directory, {recursive: true, force: true}); }

@@ -1,0 +1,2 @@
+ip.src in { aa:bb:cc:dd:00:00:00:00/64 aa:bb:cc:dd:ee:ff:00:11..aa:bb:cc:dd:ee:ff:00:12 }
+and payload contains aa:bb:cc

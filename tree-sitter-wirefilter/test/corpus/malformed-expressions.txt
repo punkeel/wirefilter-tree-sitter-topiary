@@ -3,113 +3,128 @@ missing right operand
 ==================
 a and
 ---
-
 (source_file
   (logical_expression
-    (reference_expression
-      (identifier))
-    (reference_expression
-      (MISSING identifier))))
+    left: (reference_expression
+      name: (identifier))
+    right: (reference_expression
+      name: (MISSING identifier))))
 
 ==================
 comma in set
+:error
 ==================
 a in {1, 2}
 ---
-
-(source_file
-  (comparison_expression
-    (reference_expression
-      (identifier))
-    (comparison_operator)
-    (set_literal
-      (integer)
-      (ERROR)
-      (integer))))
+(ERROR)
 
 ==================
 invalid list name
+:error
 ==================
 a in $.office
 ---
-
-(source_file
-  (comparison_expression
-    (reference_expression
-      (identifier))
-    (comparison_operator)
-    (ERROR
-      (UNEXPECTED '.'))
-    (reference_expression
-      (identifier))))
+(ERROR)
 
 ==================
 tab is not whitespace
+:error
 ==================
 a	b
 ---
-
-(source_file
-  (ERROR
-    (identifier)
-    (UNEXPECTED '\t'))
-  (reference_expression
-    (identifier)))
+(ERROR)
 
 ==================
 unterminated raw string
+:error
 ==================
 a contains r#"unterminated
 ---
-
-(source_file
-  (comparison_expression
-    (reference_expression
-      (identifier))
-    (comparison_operator)
-    (reference_expression
-      (identifier)))
-  (ERROR
-    (UNEXPECTED '#')))
+(ERROR)
 
 ==================
 invalid quoted escape
+:error
 ==================
 a contains "\n"
 ---
-
-(source_file
-  (reference_expression
-    (identifier))
-  (ERROR
-    (comparison_operator)
-    (regex_string)))
+(ERROR)
 
 ==================
 missing closing index
 ==================
 headers["x" eq "a"
 ---
-
 (source_file
-  (reference_expression
-    (identifier))
-  (ERROR
-    (quoted_string)
-    (identifier)
-    (regex_string)))
+  (comparison_expression
+    left: (reference_expression
+      name: (identifier)
+      index: (index_access
+        (quoted_string)
+        (MISSING "]")))
+    operator: (comparison_operator)
+    right: (quoted_string)))
 
 ==================
 range outside set
+:error
 ==================
 a eq 1..2
 ---
+(ERROR)
 
-(source_file
-  (comparison_expression
-    (reference_expression
-      (identifier))
-    (comparison_operator)
-    (integer))
-  (ERROR
-    (integer)))
+==================
+membership requires set or list
+:error
+==================
+x in 1
+---
+(ERROR)
+
+==================
+contains rejects sets
+:error
+==================
+x contains {"a"}
+---
+(ERROR)
+
+==================
+range whitespace before delimiter
+:error
+==================
+x in {1 ..2}
+---
+(ERROR)
+
+==================
+range whitespace after delimiter
+:error
+==================
+x in {1.. 2}
+---
+(ERROR)
+
+==================
+octal integer rejects decimal digits
+:error
+==================
+x eq 09
+---
+(ERROR)
+
+==================
+overflow octal byte
+:error
+==================
+x eq "\400"
+---
+(ERROR)
+
+==================
+regex requires string
+:error
+==================
+x matches other
+---
+(ERROR)

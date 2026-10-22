@@ -15,15 +15,27 @@ const PREC = {
   COMPARISON: 5,
 };
 
+// Lexical IP shapes, not address/range validation. Nonempty hextet groups
+// keep compressed addresses and IPv4-mapped IPv6 in a single token.
+const IP_ADDRESS = choice(
+  /([0-9]{1,3}\.){3}[0-9]{1,3}/,
+  /(([0-9a-fA-F]{1,4}:){1,6}(([0-9]{1,3}\.){3}[0-9]{1,3})|((::|([0-9a-fA-F]{1,4}:){1,7}:)([0-9a-fA-F]{1,4}:){0,6}([0-9]{1,3}\.){3}[0-9]{1,3})|(([0-9a-fA-F]{1,4}:){1,7}:([0-9a-fA-F]{1,4}:){0,7}[0-9a-fA-F]{0,4})|(::([0-9a-fA-F]{1,4}:){0,7}[0-9a-fA-F]{0,4})|(([0-9a-fA-F]{1,4}:){2,7}[0-9a-fA-F]{1,4}))/,
+);
+
+const comparison = ($, operator, rhs) => prec(PREC.COMPARISON, seq(
+  field('left', $.reference_expression),
+  field('operator', alias(operator, $.comparison_operator)),
+  field('right', rhs),
+));
+
 module.exports = grammar({
   name: 'wirefilter',
 
   // Wirefilter's skip_space() consumes spaces, CR and LF, but not tabs.
   // Wirefilter does not currently have a comment syntax.
   extras: $ => [/[ \r\n]+/],
-  word: $ => $.identifier,
 
-  externals: $ => [$.raw_string, $.regex_string],
+  externals: $ => [$.raw_string, $.regex_string, $.quoted_string, $.integer, $._immediate_integer],
 
   rules: {
     source_file: $ => $._expression,
@@ -55,44 +67,35 @@ module.exports = grammar({
       )),
     ),
 
-    // "not a eq b" is parsed by Wirefilter as "not (a eq b)".
+    // "not a eq b" means "not (a eq b)". Upstream recognizes the not
+    // prefix without a word boundary: notenabled means not enabled.
     unary_expression: $ => prec.right(PREC.NOT, seq(
-      field('operator', choice('not', '!')),
+      field('operator', choice(token(prec(2, 'not')), '!')),
       field('argument', $._expression),
     )),
 
     parenthesized_expression: $ => seq('(', $._expression, ')'),
 
+    // Operator-specific RHS syntax is independent of the Scheme. Type checking
+    // remains upstream's job, but e.g. `in 1` and `contains {"a"}` are not valid
+    // spellings for any field type.
     comparison_expression: $ => choice(
-      // Regex literals have a different upstream lexer from ordinary byte
-      // strings: escapes are left for the regex engine and an unescaped quote
-      // is allowed inside a character class.
-      prec(PREC.COMPARISON + 1, seq(
-        field('left', $.reference_expression),
-        field('operator', $._regex_comparison_operator),
-        field('right', $._regex_rhs),
-      )),
-      prec(PREC.COMPARISON, seq(
-        field('left', $.reference_expression),
-        field('operator', $.comparison_operator),
-        field('right', $._comparison_rhs),
-      )),
+      comparison($, $._ordering_operator, choice($._scalar_literal, alias($._rhs_reference, $.reference_expression))),
+      comparison($, $._membership_operator, choice($.set_literal, $.list_reference)),
+      comparison($, $._contains_operator, $._byte_literal),
+      comparison($, $._wildcard_operator, choice($.quoted_string, $.raw_string)),
+      comparison($, $._regex_operator, choice($.regex_string, $.raw_string)),
+      comparison($, $._integer_operator, choice($.integer, alias($._rhs_reference, $.reference_expression))),
     ),
 
-    comparison_operator: $ => choice(
-      'eq', '==', 'ne', '!=', 'gt', '>', 'ge', '>=',
-      'lt', '<', 'le', '<=',
-      'in', 'contains',
-      'wildcard', 'strict wildcard',
-      '&', 'bitwise_and',
+    _ordering_operator: $ => choice(
+      'eq', '==', 'ne', '!=', 'gt', '>', 'ge', '>=', 'lt', '<', 'le', '<=',
     ),
-
-    _regex_comparison_operator: $ => alias(choice('matches', '~'), $.comparison_operator),
-
-    _regex_rhs: $ => choice(
-      $.regex_string,
-      $.raw_string,
-    ),
+    _membership_operator: $ => 'in',
+    _contains_operator: $ => 'contains',
+    _wildcard_operator: $ => choice('wildcard', 'strict wildcard'),
+    _regex_operator: $ => choice('matches', '~'),
+    _integer_operator: $ => choice('&', 'bitwise_and'),
 
     // Both field references and calls can be indexed, e.g. headers["x"][*]
     // and lower(headers["x"])[0].  The Scheme determines whether the name
@@ -102,6 +105,16 @@ module.exports = grammar({
       optional(field('arguments', $.argument_list)),
       repeat(field('index', $.index_access)),
     ),
+
+    // Upstream comparison operands only fall back from literal lexing to a
+    // reference when they start with an ASCII letter or underscore. This also
+    // prevents malformed integers such as 09 from becoming field references.
+    _rhs_reference: $ => seq(
+      field('name', alias($._rhs_identifier, $.identifier)),
+      optional(field('arguments', $.argument_list)),
+      repeat(field('index', $.index_access)),
+    ),
+    _rhs_identifier: $ => /[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z0-9_]+)*/,
 
     identifier: $ => /[A-Za-z0-9_]+(\.[A-Za-z0-9_]+)*/,
 
@@ -117,56 +130,37 @@ module.exports = grammar({
 
     index_access: $ => seq('[', choice($.integer, $.quoted_string, '*'), ']'),
 
-    _comparison_rhs: $ => choice(
-      $.set_literal,
-      $.list_reference,
-      $._scalar_literal,
-      $.reference_expression,
-    ),
-
     // Literal sets are whitespace-delimited; commas are NOT valid here.
     set_literal: $ => seq('{', repeat($._set_item), '}'),
-    _set_item: $ => choice($.range_literal, $._scalar_literal),
+    _set_item: $ => choice($.range_literal, alias($._ip_cidr, $.ip_address), $._scalar_literal),
 
     // Wirefilter supports both integer and IP address ranges with '..'.
+    // A full IPv6 address can also match the byte-string token; the range
+    // delimiter disambiguates it here. CIDR likewise outranks bare bytes.
     range_literal: $ => choice(
-      seq($.integer, '..', $.integer),
-      seq($.ip_address, '..', $.ip_address),
+      seq($.integer, token.immediate('..'), alias($._immediate_integer, $.integer)),
+      seq(choice($.ip_address, alias($.byte_string, $.ip_address)), token.immediate('..'),
+        alias(token.immediate(prec(2, IP_ADDRESS)), $.ip_address)),
     ),
 
-    _scalar_literal: $ => choice(
-      $.quoted_string,
-      $.raw_string,
-      $.byte_string,
-      $.integer,
-      $.ip_address,
-    ),
+    _byte_literal: $ => choice($.quoted_string, $.raw_string, $.byte_string),
+    _scalar_literal: $ => choice($._byte_literal, $.integer, $.ip_address),
 
     // List names are lowercase ASCII/digit/underscore/dot in the upstream
-    // lexer, e.g. $office_ips or $my.lists.trusted.
-    list_reference: $ => token(/\$[a-z0-9_]+(\.[a-z0-9_]+)*/),
+    // lexer. Internal consecutive dots are valid; leading/trailing dots are not.
+    list_reference: $ => token(/\$[a-z0-9_]+(\.+[a-z0-9_]+)*/),
 
-    // Double-quoted bytes: \", \\, \\xHH and \\OOO are the valid escapes.
-    quoted_string: $ => token(/"([^"\\]|\\(["\\]|x[0-9a-fA-F]{2}|[0-7]{3}))*"/),
-
-    // Raw byte strings r"...", r#"..."#, r##"..."## and so on are
-    // handled by the external scanner, which balances delimiter hashes.
+    // Quoted, regex, and raw strings use distinct upstream lexers. The
+    // external scanner preserves all contents, including embedded NUL bytes.
 
     // Hexadecimal byte sequences, e.g. 01:ab:ff.
     byte_string: $ => token(prec(3, /([0-9a-fA-F]{2}:)+[0-9a-fA-F]{2}/)),
 
     // Wirefilter permits decimal signed integers, 0x hexadecimal and
-    // leading-zero octal. Type/range validity is checked by Wirefilter.
-    integer: $ => token(prec(1, /(0x[0-9a-fA-F]+|-?[0-9]+)/)),
+    // leading-zero octal (negative integers use decimal). Overflow is checked
+    // by Wirefilter.
 
-    ip_address: $ => token(prec(2, choice(
-      // IPv4, optionally CIDR. IPv4 and IPv6 ranges use a separate '..'.
-      /([0-9]{1,3}\.){3}[0-9]{1,3}(\/[0-9]{1,3})?/,
-      // IPv6, optionally CIDR, including compressed and IPv4-mapped forms.
-      // Keep each repeated hextet group non-empty. The previous pattern used
-      // a {0,4} hextet inside a repeated group; Tree-sitter could stop before
-      // the second colon and split 2001:db8::/32.
-      /((([0-9a-fA-F]{1,4}:){1,6}(([0-9]{1,3}\.){3}[0-9]{1,3})|((::|([0-9a-fA-F]{1,4}:){1,7}:)([0-9a-fA-F]{1,4}:){0,6}([0-9]{1,3}\.){3}[0-9]{1,3})|(([0-9a-fA-F]{1,4}:){1,7}:([0-9a-fA-F]{1,4}:){0,7}[0-9a-fA-F]{0,4})|(::([0-9a-fA-F]{1,4}:){0,7}[0-9a-fA-F]{0,4})|(([0-9a-fA-F]{1,4}:){2,7}[0-9a-fA-F]{1,4}))(\/[0-9]{1,3})?)/,
-    ))),
+    ip_address: $ => token(prec(2, IP_ADDRESS)),
+    _ip_cidr: $ => token(prec(4, seq(IP_ADDRESS, /\/[0-9]{1,3}/))),
   },
 });

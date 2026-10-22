@@ -6,7 +6,7 @@ x contains r#"a"#
 
 (source_file
   (comparison_expression
-    (reference_expression
-      (identifier))
-    (comparison_operator)
-    (raw_string)))
+    left: (reference_expression
+      name: (identifier))
+    operator: (comparison_operator)
+    right: (raw_string)))
