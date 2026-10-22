@@ -1,0 +1,1 @@
+f(not!not(a and b), !not(c or d), not foo)

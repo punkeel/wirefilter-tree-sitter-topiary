@@ -4,9 +4,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-// A scanner is necessary because r###"..."### has a variable-length
-// delimiter, which cannot be matched by a Tree-sitter regular expression.
-enum TokenType { RAW_STRING };
+// A scanner is necessary for raw strings with variable-length delimiters and
+// regex strings whose closing quote depends on character-class state.
+enum TokenType { RAW_STRING, REGEX_STRING };
 
 void *tree_sitter_wirefilter_external_scanner_create(void) { return NULL; }
 void tree_sitter_wirefilter_external_scanner_destroy(void *payload) {
@@ -30,7 +30,7 @@ bool tree_sitter_wirefilter_external_scanner_scan(void *payload,
                                                   TSLexer *lexer,
                                                   const bool *valid_symbols) {
   (void)payload;
-  if (!valid_symbols[RAW_STRING]) return false;
+  if (!valid_symbols[RAW_STRING] && !valid_symbols[REGEX_STRING]) return false;
 
   // Tree-sitter does not apply `extras` before invoking an external scanner.
   // Match Wirefilter's skip_space() here so raw strings work after an
@@ -40,7 +40,37 @@ bool tree_sitter_wirefilter_external_scanner_scan(void *payload,
     lexer->advance(lexer, true);
   }
 
-  if (lexer->lookahead != 'r') return false;
+  if (valid_symbols[REGEX_STRING] && lexer->lookahead == '"') {
+    bool in_character_class = false;
+    lexer->advance(lexer, false); // opening quote
+
+    while (!lexer->eof(lexer)) {
+      if (lexer->lookahead == '\\') {
+        lexer->advance(lexer, false);
+        if (!lexer->eof(lexer)) lexer->advance(lexer, false);
+        continue;
+      }
+      if (lexer->lookahead == '"') {
+        if (in_character_class) {
+          lexer->advance(lexer, false);
+          continue;
+        }
+        lexer->advance(lexer, false);
+        lexer->mark_end(lexer);
+        lexer->result_symbol = REGEX_STRING;
+        return true;
+      }
+      if (lexer->lookahead == '[' && !in_character_class) {
+        in_character_class = true;
+      } else if (lexer->lookahead == ']' && in_character_class) {
+        in_character_class = false;
+      }
+      lexer->advance(lexer, false);
+    }
+    return false;
+  }
+
+  if (!valid_symbols[RAW_STRING] || lexer->lookahead != 'r') return false;
 
   lexer->advance(lexer, false); // r
   unsigned hashes = 0;

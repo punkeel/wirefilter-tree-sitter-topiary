@@ -23,7 +23,7 @@ module.exports = grammar({
   extras: $ => [/[ \r\n]+/],
   word: $ => $.identifier,
 
-  externals: $ => [$.raw_string],
+  externals: $ => [$.raw_string, $.regex_string],
 
   rules: {
     source_file: $ => $._expression,
@@ -63,18 +63,35 @@ module.exports = grammar({
 
     parenthesized_expression: $ => seq('(', $._expression, ')'),
 
-    comparison_expression: $ => prec(PREC.COMPARISON, seq(
-      field('left', $.reference_expression),
-      field('operator', $.comparison_operator),
-      field('right', $._comparison_rhs),
-    )),
+    comparison_expression: $ => choice(
+      // Regex literals have a different upstream lexer from ordinary byte
+      // strings: escapes are left for the regex engine and an unescaped quote
+      // is allowed inside a character class.
+      prec(PREC.COMPARISON + 1, seq(
+        field('left', $.reference_expression),
+        field('operator', $._regex_comparison_operator),
+        field('right', $._regex_rhs),
+      )),
+      prec(PREC.COMPARISON, seq(
+        field('left', $.reference_expression),
+        field('operator', $.comparison_operator),
+        field('right', $._comparison_rhs),
+      )),
+    ),
 
     comparison_operator: $ => choice(
       'eq', '==', 'ne', '!=', 'gt', '>', 'ge', '>=',
       'lt', '<', 'le', '<=',
-      'in', 'contains', 'matches', '~',
+      'in', 'contains',
       'wildcard', 'strict wildcard',
       '&', 'bitwise_and',
+    ),
+
+    _regex_comparison_operator: $ => alias(choice('matches', '~'), $.comparison_operator),
+
+    _regex_rhs: $ => choice(
+      $.regex_string,
+      $.raw_string,
     ),
 
     // Both field references and calls can be indexed, e.g. headers["x"][*]

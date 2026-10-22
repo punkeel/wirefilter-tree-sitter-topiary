@@ -7,6 +7,7 @@
 ; Opaque byte / regex / raw-string contents are never rewritten.
 [
   (quoted_string)
+  (regex_string)
   (raw_string)
   (byte_string)
   (ip_address)
@@ -26,7 +27,8 @@
 (unary_expression "not" @append_space)
 (unary_expression "!" @append_antispace)
 
-; Calls stay compact unless an argument is a boolean chain. Delimiters use
+; Calls stay compact unless an argument contains a boolean chain, a grouped
+; boolean chain, a nested unary chain, or a nested call. Delimiters use
 ; explicit structural rules so a newly inserted newline cannot change the
 ; formatting policy on a second pass.
 (argument_list
@@ -36,13 +38,44 @@
 (argument_list "," @prepend_antispace @append_space)
 (argument_list
   "(" @append_hardline @append_indent_start
-  (logical_expression)
+  [
+    (logical_expression)
+    (parenthesized_expression (logical_expression))
+    (unary_expression (parenthesized_expression (logical_expression)))
+    (unary_expression
+      (unary_expression (parenthesized_expression (logical_expression))))
+    (reference_expression (argument_list))
+  ]
   ")" @prepend_hardline @prepend_indent_end
 )
 ; Every comma is either before or after a logical argument. Cover both orders
 ; so all arguments of such a call occupy separate lines.
 (argument_list (logical_expression) "," @append_hardline)
 (argument_list "," @append_hardline (logical_expression))
+; If a nested call or grouped boolean argument expands the call, put every
+; comma in that call on its own argument line as well.
+(argument_list
+  (_)*
+  [
+    (parenthesized_expression (logical_expression))
+    (unary_expression (parenthesized_expression (logical_expression)))
+    (unary_expression
+      (unary_expression (parenthesized_expression (logical_expression))))
+    (reference_expression (argument_list))
+  ]
+  (_)* "," @append_hardline
+)
+(argument_list
+  (_)* "," @append_hardline (_)*
+  [
+    (parenthesized_expression (logical_expression))
+    (unary_expression (parenthesized_expression (logical_expression)))
+    (unary_expression
+      (unary_expression (parenthesized_expression (logical_expression))))
+    (reference_expression (argument_list))
+  ]
+  (_)*
+)
 
 ; Expand groups that contain a boolean chain; keep simple groups compact.
 ; Compact outer wrappers also stay stable around an expanded inner group.

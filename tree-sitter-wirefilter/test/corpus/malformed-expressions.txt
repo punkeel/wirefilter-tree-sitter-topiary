@@ -79,16 +79,11 @@ a contains "\n"
 ---
 
 (source_file
-  (comparison_expression
-    (reference_expression
-      (identifier))
-    (comparison_operator)
-    (ERROR
-      (UNEXPECTED 'n'))
-    (reference_expression
-      (identifier)))
+  (reference_expression
+    (identifier))
   (ERROR
-    (UNEXPECTED '\0')))
+    (comparison_operator)
+    (regex_string)))
 
 ==================
 missing closing index
@@ -102,7 +97,7 @@ headers["x" eq "a"
   (ERROR
     (quoted_string)
     (identifier)
-    (quoted_string)))
+    (regex_string)))
 
 ==================
 range outside set

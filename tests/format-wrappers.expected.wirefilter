@@ -2,7 +2,9 @@
     a
     and b
 ))
-and any((
-    c
-    or d
-))
+and any(
+    (
+        c
+        or d
+    )
+)

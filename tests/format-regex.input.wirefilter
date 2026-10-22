@@ -1,0 +1,1 @@
+body  matches  "\d+\s+\w{2}" and (path ~ "["a-z]+" or body matches r##"\w+"##)

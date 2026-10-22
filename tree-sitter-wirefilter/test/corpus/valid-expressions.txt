@@ -197,3 +197,35 @@ ip.src in {:: ::1 1:: 1::8:9 1:2::8:9 1:2:3:4:5:6:7:: ::ffff:192.0.2.1 1:2:3:4:5
       (ip_address)
       (ip_address)
       (ip_address))))
+
+==================
+regex literal lexer
+==================
+a matches "[a-z"\]]+\d{1,10}\"" and b ~ r##"a"#"b"##
+---
+
+(source_file
+  (logical_expression
+    (comparison_expression
+      (reference_expression
+        (identifier))
+      (comparison_operator)
+      (regex_string))
+    (comparison_expression
+      (reference_expression
+        (identifier))
+      (comparison_operator)
+      (raw_string))))
+
+==================
+quoted contains literal
+==================
+a contains "plain"
+---
+
+(source_file
+  (comparison_expression
+    (reference_expression
+      (identifier))
+    (comparison_operator)
+    (quoted_string)))

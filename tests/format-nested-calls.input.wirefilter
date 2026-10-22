@@ -1,0 +1,1 @@
+outer(inner(a and b, not (c or d)), any((e xor f)), g(h and i))

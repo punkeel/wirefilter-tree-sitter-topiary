@@ -5,6 +5,7 @@
   "and" "&&" "xor" "^^" "or" "||" "not" "!"
 ] @keyword.operator
 (quoted_string) @string
+(regex_string) @string
 (raw_string) @string
 (byte_string) @string.special
 (list_reference) @constant

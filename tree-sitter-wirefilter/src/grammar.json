@@ -215,37 +215,75 @@
       ]
     },
     "comparison_expression": {
-      "type": "PREC",
-      "value": 5,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "FIELD",
-            "name": "left",
-            "content": {
-              "type": "SYMBOL",
-              "name": "reference_expression"
-            }
-          },
-          {
-            "type": "FIELD",
-            "name": "operator",
-            "content": {
-              "type": "SYMBOL",
-              "name": "comparison_operator"
-            }
-          },
-          {
-            "type": "FIELD",
-            "name": "right",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_comparison_rhs"
-            }
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "PREC",
+          "value": 6,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "left",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "reference_expression"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "operator",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_regex_comparison_operator"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "right",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_regex_rhs"
+                }
+              }
+            ]
           }
-        ]
-      }
+        },
+        {
+          "type": "PREC",
+          "value": 5,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "left",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "reference_expression"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "operator",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "comparison_operator"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "right",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_comparison_rhs"
+                }
+              }
+            ]
+          }
+        }
+      ]
     },
     "comparison_operator": {
       "type": "CHOICE",
@@ -308,14 +346,6 @@
         },
         {
           "type": "STRING",
-          "value": "matches"
-        },
-        {
-          "type": "STRING",
-          "value": "~"
-        },
-        {
-          "type": "STRING",
           "value": "wildcard"
         },
         {
@@ -329,6 +359,37 @@
         {
           "type": "STRING",
           "value": "bitwise_and"
+        }
+      ]
+    },
+    "_regex_comparison_operator": {
+      "type": "ALIAS",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "matches"
+          },
+          {
+            "type": "STRING",
+            "value": "~"
+          }
+        ]
+      },
+      "named": true,
+      "value": "comparison_operator"
+    },
+    "_regex_rhs": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "regex_string"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "raw_string"
         }
       ]
     },
@@ -652,6 +713,10 @@
     {
       "type": "SYMBOL",
       "name": "raw_string"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "regex_string"
     }
   ],
   "inline": [],

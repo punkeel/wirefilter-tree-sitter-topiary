@@ -1,0 +1,2 @@
+ip.src in { 01:ab:ff 0x0a -07 10.0.0.1..10.0.0.9 }
+and ip.dst in { 1 2 3 }
