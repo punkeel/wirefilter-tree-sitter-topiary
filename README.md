@@ -51,6 +51,8 @@ The build uses the pinned `emscripten/emsdk:4.0.15` image. After a WASM build, f
 
 The demo includes samples, live syntax errors with line/column locations, a tree with field labels and operators, keyboard formatting (`Ctrl/⌘ + Shift + F`), and copying of output. Syntax errors prevent formatting. Input is limited to 20,000 characters; the tree display is bounded for deeply nested expressions.
 
+Open **Formatter rules** in the demo to edit the Topiary query and choose 2-, 4-, or 8-space indentation. The grammar and syntax highlighting stay fixed. **Reset rules** restores the repository defaults without changing the expression. Rule edits affect the next Format action and remain local to the page; they do not modify repository files. Invalid queries and non-idempotent formatting report an error. Output is also checked against the original concrete tree and tokens, so settings cannot silently rewrite the expression or its literals.
+
 For example, `http.request.method eq "GET" and (http.host eq "example.com" or ip.src in $office_ips)` becomes:
 
 ```text

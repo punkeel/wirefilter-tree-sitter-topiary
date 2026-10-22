@@ -13,20 +13,23 @@ pub async fn initialize_topiary() -> Result<(), JsError> {
     topiary_web_tree_sitter_sys::TreeSitter::init().await
 }
 
-/// Run the real Topiary engine with the repository's formatting query.
+/// Run the real Topiary engine with editable rules and space indentation.
 #[cfg(target_arch = "wasm32")]
 #[wasm_bindgen]
-pub fn format_wirefilter(source: &str, grammar: JsValue, query: &str) -> Result<String, JsError> {
+pub fn format_wirefilter(source: &str, grammar: JsValue, query: &str, indent: usize) -> Result<String, JsError> {
+    if !matches!(indent, 2 | 4 | 8) {
+        return Err(JsError::new("Indentation must be 2, 4, or 8 spaces."));
+    }
     let grammar = topiary_web_tree_sitter_sys::Language::from(grammar).into();
     let formatting_query = TopiaryQuery::new(&grammar, query)
-        .map_err(|e| JsError::new(&format!("{e:?}")))?;
+        .map_err(|e| JsError::new(&format!("Invalid formatting query: {e:?}")))?;
     let language = Language {
         name: "wirefilter".into(), grammar, formatting_query,
-        injection_query: None, indent: Some("    ".into()),
+        injection_query: None, indent: Some(" ".repeat(indent)),
     };
     let mut output = Vec::new();
     formatter_str(source, &mut output, &language, Operation::Format {
         skip_idempotence: false, tolerate_parsing_errors: false, skip_stage: None,
-    }, None).map_err(|e| JsError::new(&format!("{e:?}")))?;
+    }, None).map_err(|e| JsError::new(&format!("Formatting rules failed: {e:?}")))?;
     String::from_utf8(output).map_err(|e| JsError::new(&e.to_string()))
 }

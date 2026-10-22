@@ -5,6 +5,9 @@ import formatterRuntime from '../formatter/pkg/wirefilter_formatter_bg.wasm?url'
 import highlightQuery from '../../tree-sitter-wirefilter/queries/highlights.scm?raw';
 import formattingQuery from '../../topiary/queries/formatting.scm?raw';
 
+export const defaultFormattingQuery = formattingQuery;
+export const defaultIndent = 4;
+
 let parser, language, highlights, initialization;
 export function initialize() {
   return initialization ??= (async () => {
@@ -91,13 +94,56 @@ function renderTree(root) {
   return lines.join('\n');
 }
 
-export async function format(source) {
+// Compare the concrete tree and every literal/operator token. Editable rules
+// may change whitespace, but must not change the expression being formatted.
+function treeSignature(root) {
+  const result = [];
+  const pending = [root];
+  while (pending.length) {
+    const node = pending.pop();
+    if (node === null) { result.push(['end']); continue; }
+    result.push(['node', node.type]);
+    if (!node.childCount) result.push(['token', node.text]);
+    pending.push(null, ...node.children.toReversed());
+  }
+  return JSON.stringify(result);
+}
+
+export async function format(source, { query = defaultFormattingQuery, indent = defaultIndent } = {}) {
   await initialize();
   if (source.length > 20000) throw new Error('Please keep demo expressions below 20,000 characters.');
+  if (typeof query !== 'string' || query.length > 64000) {
+    throw new Error('Formatting rules must be a Topiary query below 64,000 characters.');
+  }
+  if (![2, 4, 8].includes(indent)) throw new Error('Indentation must be 2, 4, or 8 spaces.');
+  let original;
   const tree = parser.parse(source);
   try {
     const errors = inspectTree(tree);
     if (errors.length) throw new Error(`Fix syntax errors before formatting: ${errors[0].message}`);
+    original = treeSignature(tree.rootNode);
   } finally { tree.delete(); }
-  return format_wirefilter(source, language, formattingQuery);
+  // Report query compiler errors without exposing a Rust/JS stack trace in
+  // the rules editor. Topiary still validates capture names and predicates.
+  let compiledQuery;
+  try { compiledQuery = language.query(query); }
+  catch (error) { throw new Error(`Invalid formatting query: ${error.message.split('\n')[0]}`); }
+  finally { compiledQuery?.delete(); }
+  let output;
+  try { output = format_wirefilter(source, language, query, indent); }
+  catch (error) {
+    const message = error.message || String(error);
+    const queryError = message.match(/Query\("([^"\n]+)"\)/);
+    if (queryError) throw new Error(`Formatting rule error: ${queryError[1]}`);
+    if (message.includes('IdempotenceParsing')) throw new Error('Formatting rules produced invalid syntax.');
+    if (message.includes('Idempotence')) throw new Error('Formatting rules must produce stable output when applied twice.');
+    throw error;
+  }
+  const formattedTree = parser.parse(output);
+  try {
+    if (inspectTree(formattedTree).length || treeSignature(formattedTree.rootNode) !== original) {
+      throw new Error('Formatting rules changed expression syntax or token contents. Adjust the rules to change whitespace only.');
+    }
+  } finally { formattedTree.delete(); }
+  return output;
 }
