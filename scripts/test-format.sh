@@ -25,60 +25,17 @@ fi
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
 
-parse_xml() {
+# The CST includes anonymous operators and punctuation, unlike the named-tree
+# XML walker. Omitting ranges lets us compare every node/field/token while
+# allowing whitespace changes. Literal contents are still in the CST output.
+parse_cst() {
   local source="$1"
-  local xml="$2"
-  local diagnostics="$xml.stderr"
-
-  if ! (cd "$ROOT/tree-sitter-wirefilter" && "$TREE_SITTER_BIN" parse --xml "$source") \
-    >"$xml" 2>"$diagnostics"; then
-    cat "$diagnostics" >&2
-    cat "$xml" >&2
+  local output="$2"
+  if ! (cd "$ROOT/tree-sitter-wirefilter" && "$TREE_SITTER_BIN" parse --cst --no-ranges "$source") \
+    >"$output" 2>"$output.stderr"; then
+    cat "$output.stderr" "$output" >&2
     return 1
   fi
-  if rg -q '<(ERROR|MISSING)([ >])' "$xml"; then
-    echo "parse tree contains ERROR/MISSING for $source" >&2
-    cat "$xml" >&2
-    return 1
-  fi
-}
-
-compare_ast_and_tokens() {
-  python3 - "$1" "$2" <<'PY'
-import sys
-import xml.etree.ElementTree as ET
-
-
-def signature(path):
-    root = ET.parse(path).getroot()
-    shape = []
-    tokens = []
-
-    def visit(node):
-        if node.tag in {"ERROR", "MISSING"}:
-            raise AssertionError(f"{node.tag} in {path}")
-        shape.append(("open", node.tag, node.attrib.get("field", "")))
-        children = list(node)
-        if not children:
-            tokens.append(node.text or "")
-        for child in children:
-            visit(child)
-        shape.append(("close", node.tag, ""))
-
-    visit(root)
-    return shape, tokens
-
-
-before_shape, before_tokens = signature(sys.argv[1])
-after_shape, after_tokens = signature(sys.argv[2])
-if before_shape != after_shape:
-    raise SystemExit("AST shape changed during formatting")
-if before_tokens != after_tokens:
-    raise SystemExit(
-        "leaf tokens changed during formatting:\n"
-        f"before={before_tokens!r}\nafter={after_tokens!r}"
-    )
-PY
 }
 
 shopt -s nullglob
@@ -93,18 +50,18 @@ for input in "${inputs[@]}"; do
   expected="$stem.expected.wirefilter"
   once="$tmpdir/$(basename "$stem").once.wirefilter"
   twice="$tmpdir/$(basename "$stem").twice.wirefilter"
-  input_xml="$tmpdir/$(basename "$stem").input.xml"
-  output_xml="$tmpdir/$(basename "$stem").output.xml"
+  input_cst="$tmpdir/$(basename "$stem").input.cst"
+  output_cst="$tmpdir/$(basename "$stem").output.cst"
 
   [[ -f "$expected" ]] || { echo "missing golden output: $expected" >&2; exit 1; }
-  parse_xml "$input" "$input_xml"
+  parse_cst "$input" "$input_cst"
 
   "$TOPIARY_BIN" -C "$ROOT/topiary/languages.ncl" format --language wirefilter \
     <"$input" >"$once"
   diff -u "$expected" "$once"
 
-  parse_xml "$once" "$output_xml"
-  compare_ast_and_tokens "$input_xml" "$output_xml"
+  parse_cst "$once" "$output_cst"
+  diff -u "$input_cst" "$output_cst"
 
   "$TOPIARY_BIN" -C "$ROOT/topiary/languages.ncl" format --language wirefilter \
     <"$once" >"$twice"
