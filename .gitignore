@@ -14,3 +14,5 @@ demo/playwright-report/
 .sites-checkout/
 
 /dist/
+
+/.wrangler/

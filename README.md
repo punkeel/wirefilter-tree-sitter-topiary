@@ -65,15 +65,16 @@ and (
 
 ## Workers hosting
 
-`.openai/hosting.json` records the Sites deployment, which serves `dist` on Cloudflare Workers. The same static output can be deployed to your own Cloudflare account using `demo/wrangler.jsonc`:
+Public demo: **https://wirefilter-playground.punkeel.workers.dev**
+
+The `wirefilter-playground` Worker serves the static `dist` output directly from your Cloudflare account. Deploy with the authenticated Wrangler CLI and `demo/wrangler.jsonc`:
 
 ```sh
 npm run demo:build
-cd demo
-npx wrangler deploy
+npm exec --yes --package=wrangler@4.151.3 -- wrangler deploy --config demo/wrangler.jsonc
 ```
 
-No service secrets, database, or backend formatter are required.
+No service secrets, database, or backend formatter are required. `.openai/hosting.json` retains metadata for the separate Sites deployment.
 
 ## Syntax and limits
 
