@@ -37,7 +37,10 @@ Run the documented root test command after changes. Grammar changes need corpus
 coverage for valid syntax, malformed input, precedence, and AST shape. Formatter
 changes need exact output goldens, idempotence, rejection of invalid syntax, and
 AST/token preservation. Run the demo tests and production build after integration.
-Report any validation that was not run. Syntax diagnostics must include missing
+The offline conformance cases pin an upstream revision; run `npm run
+test:upstream` with `WIREFILTER_UPSTREAM` pointing at that checkout when changing
+syntax expectations. Keep lexical rejection separate from Scheme-dependent
+validation. Report any validation that was not run. Syntax diagnostics must include missing
 nodes as well as ERROR nodes; never display user input through unescaped HTML.
 
 ## Publishing

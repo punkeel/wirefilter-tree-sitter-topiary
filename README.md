@@ -12,7 +12,7 @@ cargo install topiary-cli --version 0.8.0 --locked
 npm test
 ```
 
-`npm test` regenerates and builds the parser, runs the Tree-sitter corpus, parses the example fixtures, and checks formatter goldens, idempotence, and preservation of tree structure and leaf tokens. Generated parser sources are committed; binaries and build caches are ignored. The grammar uses ABI 14 for compatibility with the pinned browser runtime.
+`npm test` regenerates and builds the parser, runs the Tree-sitter corpus, parses the example fixtures, and checks formatter goldens, idempotence, and preservation of every concrete-tree node and token. It also runs generated formatting cases and the pinned upstream conformance fixtures. Generated parser sources are committed; binaries and build caches are ignored. The grammar uses ABI 14 for compatibility with the pinned browser runtime.
 
 Format an expression:
 
@@ -22,7 +22,7 @@ printf 'http.request.method eq "GET" and ip.src in {192.0.2.0/24 10.0.0.1}' \
   | ./scripts/format.sh
 ```
 
-For checked formatting of a file, run `./scripts/format.sh file.wirefilter` (writes stdout). The wrapper checks both ERROR and MISSING nodes before calling Topiary: Topiary 0.8 alone can accept incomplete trees with missing delimiters.
+For checked formatting of a file, run `./scripts/format.sh file.wirefilter` (writes stdout). The wrapper checks both ERROR and MISSING nodes and verifies that the formatted result preserves the concrete tree and token spellings before writing stdout: Topiary 0.8 alone can accept incomplete trees with missing delimiters.
 
 For known-valid files, native Topiary can also format in place:
 
@@ -34,7 +34,7 @@ The local Topiary registration resolves the shared library relative to `topiary/
 
 ## Browser demo
 
-The browser uses the repository's grammar, highlighting query, and formatting query. Topiary 0.8.0 is compiled to WebAssembly with small, documented compatibility patches in `demo/formatter/vendor/`. Native and browser output are compared against the same golden files. The demo test command rebuilds both WASM modules and the frontend before running Playwright, so it cannot silently use an old build. Boolean operators (`and`, `or`, `xor`, and their symbolic aliases) always begin a new line, even when the input is one line. Boolean groups and calls with boolean-chain arguments expand with four-space indentation. Simple expressions, calls, and groups stay compact; sets retain their input multiline structure. Literal contents are never reflowed. This is a structural formatting policy, not line-width-driven wrapping.
+The browser uses the repository's grammar, highlighting query, and formatting query. Topiary 0.8.0 is compiled to WebAssembly with small, documented compatibility patches in `demo/formatter/vendor/`. Native and browser output are compared against the same golden files. The demo test command rebuilds both WASM modules and the frontend before running Playwright, so it cannot silently use an old build. Boolean operators (`and`, `or`, `xor`, and their symbolic aliases) always begin a new line, even when the input is one line. Boolean groups and calls with boolean-chain, grouped boolean, or nested-call arguments expand with four-space indentation. Simple expressions, calls, and groups stay compact; sets retain their input multiline structure. Literal contents are never reflowed. This is a structural formatting policy, not line-width-driven wrapping.
 
 Building both WASM modules requires Docker, the Rust WASM target, and a matching wasm-bindgen CLI:
 
@@ -84,7 +84,11 @@ The grammar follows the upstream Rust lexers and AST parsers under `engine/src/a
 - Comparison operators, `contains`, regex matching, wildcards, membership, and bitwise tests.
 - Fields, function calls, `any(...)`/`all(...)`, indexes and `[*]`.
 - Whitespace-separated sets, named lists, integer/IP ranges, IP/CIDR, integers, and byte strings.
-- Quoted strings and hash-balanced raw strings without rewriting literal contents.
+- Quoted byte strings, separately lexed regex strings, and hash-balanced raw strings without rewriting literal contents.
+
+Operator-specific punctuation is checked: membership needs a set or list, regex/wildcard operators need string literals, and ranges cannot contain whitespace around `..`. Integer lexing respects decimal, octal, and hexadecimal spellings, and quoted octal escapes must fit in a byte. Keyword prefixes follow upstream, so `notenabled` parses as `not enabled`.
+
+See [the conformance contract](docs/conformance.md) for the pinned upstream revision, test coverage, and the optional `npm run test:upstream` command.
 
 This is a **syntax parser**, not Wirefilter's schema-dependent Rust validator. It does not resolve field names or check types, function arity, integer overflow, valid IP addresses, regex compatibility, or the `Array(Bool)` requirement for quantifiers. Colon-separated bytes and some IPv6 forms are lexically ambiguous without type information. Some forms accepted by this grammar require rejection by Wirefilter's `Scheme`; do not use a green syntax status as a security-policy validation result.
 

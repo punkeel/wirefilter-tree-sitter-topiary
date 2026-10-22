@@ -1,0 +1,576 @@
+{
+  "format": "wirefilter-upstream-conformance/v1",
+  "upstream": {
+    "repository": "https://github.com/cloudflare/wirefilter",
+    "revision": "f656cc5c04bc112977d949b6afd48c5ebe426ece",
+    "crate": "engine"
+  },
+  "scope": {
+    "treeSitter": "syntax-only",
+    "upstream": "validity is checked under the declared fixture Scheme; it is not general schema equivalence"
+  },
+  "scheme": {
+    "fields": {
+      "bool_a": "Bool",
+      "bool_b": "Bool",
+      "bool_c": "Bool",
+      "bool_d": "Bool",
+      "bool_array": "Array(Bool)",
+      "int": "Int",
+      "int_limit": "Int",
+      "int_array": "Array(Int)",
+      "ip": "Ip",
+      "ip_limit": "Ip",
+      "bytes": "Bytes",
+      "bytes_other": "Bytes",
+      "bytes_array": "Array(Bytes)",
+      "map_bytes": "Map(Bytes)",
+      "map_bytes_array": "Map(Array(Bytes))"
+    },
+    "functions": {
+      "echo_bytes": {
+        "parameters": [
+          {
+            "kind": "field",
+            "type": "Bytes"
+          }
+        ],
+        "return": "Bytes"
+      },
+      "echo_int": {
+        "parameters": [
+          {
+            "kind": "field",
+            "type": "Int"
+          }
+        ],
+        "return": "Int"
+      },
+      "sum_int": {
+        "parameters": [
+          {
+            "kind": "field",
+            "type": "Int"
+          },
+          {
+            "kind": "field",
+            "type": "Int"
+          }
+        ],
+        "return": "Int"
+      }
+    },
+    "lists": [
+      {
+        "name": "office_ips.trusted",
+        "type": "Ip"
+      },
+      {
+        "name": "blocked_bytes",
+        "type": "Bytes"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "id": "logical-precedence",
+      "kind": "valid",
+      "source": "bool_a or bool_b xor bool_c and bool_d",
+      "expectedAst": {
+        "op": "Or",
+        "items": [
+          {
+            "lhs": "bool_a",
+            "op": "IsTrue"
+          },
+          {
+            "op": "Xor",
+            "items": [
+              {
+                "lhs": "bool_b",
+                "op": "IsTrue"
+              },
+              {
+                "op": "And",
+                "items": [
+                  {
+                    "lhs": "bool_c",
+                    "op": "IsTrue"
+                  },
+                  {
+                    "lhs": "bool_d",
+                    "op": "IsTrue"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "tree": "(source_file (logical_expression left: (reference_expression name: (identifier)) right: (logical_expression left: (reference_expression name: (identifier)) right: (logical_expression left: (reference_expression name: (identifier)) right: (reference_expression name: (identifier))))))"
+    },
+    {
+      "id": "bare-boolean-and-symbolic-logicals",
+      "kind": "valid",
+      "source": "bool_a && bool_b ^^ bool_c || bool_d"
+    },
+    {
+      "id": "unary-and-group",
+      "kind": "valid",
+      "source": "not (bool_a or !bool_b)"
+    },
+    {
+      "id": "ordering-eq-keyword",
+      "kind": "valid",
+      "source": "int eq 1"
+    },
+    {
+      "id": "ordering-eq-symbol",
+      "kind": "valid",
+      "source": "int == 1"
+    },
+    {
+      "id": "ordering-ne-ge-le-gt-lt",
+      "kind": "valid",
+      "source": "int != 0 and int >= 0 and int <= 10 and int > -1 and int < 11"
+    },
+    {
+      "id": "ordering-keyword-aliases",
+      "kind": "valid",
+      "source": "int ne 0 and int ge 0 and int le 10 and int gt -1 and int lt 11"
+    },
+    {
+      "id": "integer-bitwise-symbol",
+      "kind": "valid",
+      "source": "int & 0x01"
+    },
+    {
+      "id": "integer-bitwise-keyword",
+      "kind": "valid",
+      "source": "int bitwise_and 0123"
+    },
+    {
+      "id": "bytes-contains",
+      "kind": "valid",
+      "source": "bytes contains \"needle\""
+    },
+    {
+      "id": "bytes-regex-aliases",
+      "kind": "valid",
+      "source": "bytes matches \"^ab[0-9]+$\" and bytes ~ r#\"^ab[0-9]+$\"#"
+    },
+    {
+      "id": "bytes-wildcard-aliases",
+      "kind": "valid",
+      "source": "bytes wildcard \"*admin*\" and bytes strict wildcard r#\"*admin?\"#"
+    },
+    {
+      "id": "membership-set-and-list",
+      "kind": "valid",
+      "source": "ip in { 127.0.0.1 2001:db8::/32 10.0.0.1..10.0.0.2 } and ip in $office_ips.trusted"
+    },
+    {
+      "id": "bytes-membership-and-contains-set",
+      "kind": "valid",
+      "source": "bytes in { \"a\" 01:ab:ff } and bytes contains \"a\""
+    },
+    {
+      "id": "quoted-escape-forms",
+      "kind": "valid",
+      "source": "bytes eq \"quote: \\\" slash: \\\\ hex: \\x41 octal: \\101\""
+    },
+    {
+      "id": "raw-string-hash-delimiter",
+      "kind": "valid",
+      "source": "bytes eq r##\"a#\"b\"##"
+    },
+    {
+      "id": "raw-string-newline-preserved",
+      "kind": "valid",
+      "source": "bytes contains r#\"raw\nline\"#"
+    },
+    {
+      "id": "colon-byte-prefix",
+      "kind": "valid",
+      "source": "bytes eq 01:ab:ff"
+    },
+    {
+      "id": "ipv4-prefix",
+      "kind": "valid",
+      "source": "ip in { 192.0.2.1/32 }"
+    },
+    {
+      "id": "ipv6-prefix-and-compression",
+      "kind": "valid",
+      "source": "ip in { :: ::1 1:: 2001:db8::/32 ::ffff:192.0.2.1 }"
+    },
+    {
+      "id": "ip-bytes-prefix-ambiguity",
+      "kind": "valid",
+      "source": "ip eq ab::cd and bytes eq ab:cd"
+    },
+    {
+      "id": "integer-range-and-leading-zero",
+      "kind": "valid",
+      "source": "int in { -10 0x10 0123..0125 }"
+    },
+    {
+      "id": "array-index",
+      "kind": "valid",
+      "source": "bytes_array[0] eq \"x\""
+    },
+    {
+      "id": "map-key-index-with-space",
+      "kind": "valid",
+      "source": "map_bytes[ \"x\" ] eq \"y\""
+    },
+    {
+      "id": "map-each-index-and-quantifier",
+      "kind": "valid",
+      "source": "any(map_bytes[*] eq \"x\") and all(bool_array)"
+    },
+    {
+      "id": "function-call-and-indexed-argument",
+      "kind": "valid",
+      "source": "echo_bytes(bytes) eq \"x\" and echo_bytes(map_bytes[\"x\"]) eq \"y\""
+    },
+    {
+      "id": "function-call-with-comma-arguments",
+      "kind": "valid",
+      "source": "sum_int(int, int_limit) gt 0"
+    },
+    {
+      "id": "function-call-in-index-expression",
+      "kind": "valid",
+      "source": "echo_int(int) ge 0"
+    },
+    {
+      "id": "newline-whitespace",
+      "kind": "valid",
+      "source": "int eq\n0x10 and\nbytes contains\n01:ab"
+    },
+    {
+      "id": "missing-right-hand-side",
+      "kind": "invalid",
+      "source": "int eq"
+    },
+    {
+      "id": "missing-logical-right-hand-side",
+      "kind": "invalid",
+      "source": "bool_a and"
+    },
+    {
+      "id": "missing-group-close",
+      "kind": "invalid",
+      "source": "(int eq 1"
+    },
+    {
+      "id": "missing-quoted-close",
+      "kind": "invalid",
+      "source": "bytes contains \"unterminated"
+    },
+    {
+      "id": "missing-raw-close",
+      "kind": "invalid",
+      "source": "bytes contains r#\"unterminated"
+    },
+    {
+      "id": "comma-in-set",
+      "kind": "invalid",
+      "source": "int in {1, 2}"
+    },
+    {
+      "id": "invalid-quoted-escape",
+      "kind": "invalid",
+      "source": "bytes contains \"bad\\q\""
+    },
+    {
+      "id": "missing-index-close",
+      "kind": "invalid",
+      "source": "bytes_array[0 eq \"x\""
+    },
+    {
+      "id": "range-outside-set",
+      "kind": "invalid",
+      "source": "int eq 1..2"
+    },
+    {
+      "id": "trailing-expression",
+      "kind": "invalid",
+      "source": "bytes eq \"x\" \"y\""
+    },
+    {
+      "id": "missing-set-close",
+      "kind": "invalid",
+      "source": "int in {1 2"
+    },
+    {
+      "id": "quoted-regex-escapes",
+      "kind": "valid",
+      "source": "bytes matches \"\\d+\\s+\\w{2}\""
+    },
+    {
+      "id": "quoted-regex-character-class-quote",
+      "kind": "valid",
+      "source": "bytes matches \"[\"a-z]+\""
+    },
+    {
+      "id": "quoted-regex-escaped-close",
+      "kind": "valid",
+      "source": "bytes ~ \"[a-z\\]]+\""
+    },
+    {
+      "id": "quoted-nul",
+      "kind": "valid",
+      "source": "bytes eq \"a\u0000b\""
+    },
+    {
+      "id": "quoted-control-characters",
+      "kind": "valid",
+      "source": "bytes eq \"a\r\n\tb\""
+    },
+    {
+      "id": "raw-nul",
+      "kind": "valid",
+      "source": "bytes eq r#\"a\u0000b\"#"
+    },
+    {
+      "id": "octal-byte-boundary",
+      "kind": "valid",
+      "source": "bytes eq \"\\000\\177\\377\""
+    },
+    {
+      "id": "list-consecutive-dots",
+      "kind": "valid",
+      "source": "ip in $office..ips"
+    },
+    {
+      "id": "list-multiple-consecutive-dots",
+      "kind": "valid",
+      "source": "bytes in $block...list"
+    },
+    {
+      "id": "hex-array-index",
+      "kind": "valid",
+      "source": "bytes_array[0x01] eq \"a\""
+    },
+    {
+      "id": "octal-array-index",
+      "kind": "valid",
+      "source": "bytes_array[01] eq \"a\""
+    },
+    {
+      "id": "negative-zero-index",
+      "kind": "valid",
+      "source": "bytes_array[-0] eq \"a\""
+    },
+    {
+      "id": "contains-bytes",
+      "kind": "valid",
+      "source": "bytes contains 01:ab:ff"
+    },
+    {
+      "id": "wildcard-raw",
+      "kind": "valid",
+      "source": "bytes wildcard r#\"*a*\"#"
+    },
+    {
+      "id": "empty-membership-set",
+      "kind": "valid",
+      "source": "int in {}"
+    },
+    {
+      "id": "ip-range",
+      "kind": "valid",
+      "source": "ip in {192.0.2.1..192.0.2.2}"
+    },
+    {
+      "id": "overflow-octal-escape",
+      "kind": "invalid",
+      "source": "bytes eq \"\\400\""
+    },
+    {
+      "id": "overflow-octal-escape-max",
+      "kind": "invalid",
+      "source": "bytes eq \"\\777\""
+    },
+    {
+      "id": "short-octal-escape",
+      "kind": "invalid",
+      "source": "bytes eq \"\\37\""
+    },
+    {
+      "id": "invalid-hex-escape",
+      "kind": "invalid",
+      "source": "bytes eq \"\\xgg\""
+    },
+    {
+      "id": "membership-scalar",
+      "kind": "invalid",
+      "source": "int in 1"
+    },
+    {
+      "id": "membership-field",
+      "kind": "invalid",
+      "source": "int in int_limit"
+    },
+    {
+      "id": "contains-set",
+      "kind": "invalid",
+      "source": "bytes contains {\"a\" \"b\"}"
+    },
+    {
+      "id": "contains-field",
+      "kind": "invalid",
+      "source": "bytes contains bytes_other"
+    },
+    {
+      "id": "wildcard-byte-sequence",
+      "kind": "invalid",
+      "source": "bytes wildcard 01:ab"
+    },
+    {
+      "id": "wildcard-field",
+      "kind": "invalid",
+      "source": "bytes wildcard bytes_other"
+    },
+    {
+      "id": "regex-field",
+      "kind": "invalid",
+      "source": "bytes matches bytes_other"
+    },
+    {
+      "id": "regex-byte-sequence",
+      "kind": "invalid",
+      "source": "bytes matches 01:ab"
+    },
+    {
+      "id": "comparison-set",
+      "kind": "invalid",
+      "source": "int eq {1}"
+    },
+    {
+      "id": "comparison-list",
+      "kind": "invalid",
+      "source": "ip eq $office_ips.trusted"
+    },
+    {
+      "id": "range-space-before",
+      "kind": "invalid",
+      "source": "int in {1 ..2}"
+    },
+    {
+      "id": "range-space-after",
+      "kind": "invalid",
+      "source": "int in {1.. 2}"
+    },
+    {
+      "id": "leading-list-dot",
+      "kind": "invalid",
+      "source": "ip in $.office"
+    },
+    {
+      "id": "ending-list-dot",
+      "kind": "invalid",
+      "source": "ip in $office."
+    },
+    {
+      "id": "regex-unclosed-character-class",
+      "kind": "invalid",
+      "source": "bytes matches \"[abc\""
+    },
+    {
+      "id": "invalid-octal-08",
+      "kind": "invalid",
+      "source": "int eq 08"
+    },
+    {
+      "id": "invalid-octal-09",
+      "kind": "invalid",
+      "source": "int eq 09"
+    },
+    {
+      "id": "invalid-octal-0128",
+      "kind": "invalid",
+      "source": "int eq 0128"
+    },
+    {
+      "id": "negative-leading-zero-decimal",
+      "kind": "valid",
+      "source": "int eq -09"
+    },
+    {
+      "id": "cidr-outside-set",
+      "kind": "invalid",
+      "source": "ip eq 192.0.2.1/32"
+    },
+    {
+      "id": "unary-keyword-prefix",
+      "kind": "valid",
+      "source": "notbool_a",
+      "expectedAst": {
+        "op": "Not",
+        "arg": {
+          "lhs": "bool_a",
+          "op": "IsTrue"
+        }
+      },
+      "tree": "(source_file (unary_expression argument: (reference_expression name: (identifier))))"
+    },
+    {
+      "id": "logical-keyword-prefix",
+      "kind": "valid",
+      "source": "bool_a andbool_b"
+    },
+    {
+      "id": "comparison-keyword-prefix",
+      "kind": "valid",
+      "source": "int eq1"
+    },
+    {
+      "id": "integer-adjacent-or",
+      "kind": "valid",
+      "source": "int eq 1or bool_a"
+    },
+    {
+      "id": "integer-adjacent-and",
+      "kind": "invalid",
+      "source": "int eq 1and bool_a"
+    },
+    {
+      "id": "octal-set-no-splitting",
+      "kind": "invalid",
+      "source": "int in {09}"
+    },
+    {
+      "id": "decimal-hex-no-splitting",
+      "kind": "invalid",
+      "source": "int in {12ab}"
+    },
+    {
+      "id": "negative-adjacent-set-items",
+      "kind": "valid",
+      "source": "int in {1-2}"
+    },
+    {
+      "id": "invalid-octal-range-bound",
+      "kind": "invalid",
+      "source": "int in {1..09}"
+    },
+    {
+      "id": "valid-octal-range-bound",
+      "kind": "valid",
+      "source": "int in {0..077}"
+    },
+    {
+      "id": "byte-shaped-ipv6-cidr",
+      "kind": "valid",
+      "source": "ip in {aa:bb:cc:dd:00:00:00:00/64}"
+    },
+    {
+      "id": "byte-shaped-ipv6-range",
+      "kind": "valid",
+      "source": "ip in {aa:bb:cc:dd:ee:ff:00:11..aa:bb:cc:dd:ee:ff:00:12}"
+    }
+  ]
+}

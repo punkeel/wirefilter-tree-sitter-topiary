@@ -5,6 +5,7 @@
     "build": "bash scripts/build.sh",
     "test": "bash scripts/test.sh",
     "demo:build": "bash scripts/build-demo.sh",
-    "demo:test": "bash scripts/test-demo.sh"
+    "demo:test": "bash scripts/test-demo.sh",
+    "test:upstream": "bash scripts/test-upstream.sh"
   }
 }

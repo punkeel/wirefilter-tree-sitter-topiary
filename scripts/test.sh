@@ -9,6 +9,7 @@ export PATH="$PWD/tree-sitter-wirefilter/node_modules/.bin:$PATH"
 
 ./scripts/test-invalid.sh
 node tests/scanner.mjs
+node tests/conformance.mjs
 
 node tests/checked-format.mjs
 node tests/format-properties.mjs
