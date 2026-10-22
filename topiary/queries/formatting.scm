@@ -48,9 +48,9 @@
 
 ; A nonempty set is rendered with spaces next to braces.
 (set_literal
-  "{" @append_space @append_indent_start
+  "{" @append_spaced_softline @append_indent_start
   (_)
-  "}" @prepend_indent_end @prepend_space
+  "}" @prepend_indent_end @prepend_spaced_softline
 )
 
 ; Preserve a separating space (or soft line break) between consecutive set

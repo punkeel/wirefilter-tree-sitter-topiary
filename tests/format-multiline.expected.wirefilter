@@ -1,0 +1,10 @@
+(
+    foo eq "x"
+    and (
+        bar contains r##"long # raw"##
+        or baz in {
+            1
+            2
+        }
+    )
+)

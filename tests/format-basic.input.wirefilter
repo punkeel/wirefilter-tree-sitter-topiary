@@ -1,0 +1,1 @@
+any(http.request.headers["user-agent"][*]contains r#"/admin path"#)and!tcp.flags&0x02

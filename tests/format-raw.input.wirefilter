@@ -1,0 +1,1 @@
+(http.host wildcard r##"*\"quoted\"*"##)or http.request.uri.path contains r#"/admin path"#
