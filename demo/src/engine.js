@@ -17,7 +17,7 @@ export function initialize() {
     parser = new Parser();
     parser.setLanguage(language);
     highlights = language.query(highlightQuery);
-    await initializeWasm({ module_or_path: formatterRuntime });
+    await initializeWasm(formatterRuntime);
     await initialize_topiary();
   })();
 }

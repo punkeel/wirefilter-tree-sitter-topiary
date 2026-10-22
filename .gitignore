@@ -16,5 +16,3 @@ demo/playwright-report/
 /dist/
 
 /.wrangler/
-
-/demo/formatter/vendor/

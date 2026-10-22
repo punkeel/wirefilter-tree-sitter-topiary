@@ -1,16 +1,18 @@
 # Browser formatter adapter
 
-This small WASM adapter runs Topiary 0.8.0 with the same query as the native
-formatter. It is independent of the native Cargo workspace.
+The demo uses unmodified crates.io releases: Topiary 0.6.1, wasm-bindgen
+0.2.100, and web-tree-sitter 0.20.8. Cargo.lock pins their dependencies.
+The native formatter remains on Topiary 0.8.0. Both use the same formatting
+query, and browser tests compare exact goldens and generated cases against
+native output.
 
-`prepare.sh` downloads the crates.io Topiary archive, verifies its pinned SHA-256,
-and applies `topiary-core.patch` to an ignored build dependency under `vendor/`.
-Only the compatibility patch is maintained here; the downloaded source and its
-MIT license stay together. The first build needs network access; subsequent
-builds reuse the archive under `target/` and reapply the patch to fresh source. The script requires curl, sha256sum,
-tar, and patch, in addition to the demo's documented prerequisites.
+Upstream [documents that its web playground has diverged from current releases](https://github.com/topiary/topiary/blob/01261964a42297c37cb91adf0cf2dab0a95e187b/docs/book/src/playground/web.md).
+Its [standalone playground](https://github.com/topiary/playground/tree/39cdd5dfa9146e5dc43d84e7d1d17195adbf13dd)
+uses 0.5.1, which normalizes whitespace inside multiline literals. We use
+0.6.1 because it preserves those literals and passes our browser regressions.
+Versions 0.7.3 and 0.8.0 reference APIs absent from their WASM facades.
 
-The patch adapts diagnostics to the WASM facade's non-Copy Range and missing
-query-error ranges, node language names, and query property settings. Native
-branches are unchanged. Wirefilter uses no injected languages, so the missing
-injection-property API does not affect this formatter.
+Topiary 0.6.1 has a transitive native Tree-sitter dependency even on WASM.
+`demo/build.sh` supplies Clang with C headers from the same pinned Emscripten
+image used to build the grammar. No vendored source, patches, or separate
+dependency download scripts are needed. The wasm-bindgen CLI must match 0.2.100.

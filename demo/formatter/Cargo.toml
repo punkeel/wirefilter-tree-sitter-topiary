@@ -9,14 +9,12 @@ crate-type = ["cdylib"]
 
 [dependencies]
 # Keep the Rust bindings aligned with the wasm-bindgen-cli installed by the
-# demo build (0.2.126).
-wasm-bindgen = "=0.2.126"
-wasm-bindgen-futures = "=0.4.76"
-topiary-core = { path = "vendor/topiary-core", version = "=0.8.0" }
-topiary-tree-sitter-facade = "=0.8.0"
-topiary-web-tree-sitter-sys = { version = "=0.8.0", features = ["web-sys"] }
-# tree-sitter 0.26.12's older native/WASM boundary is incompatible with 0.1.9.
-tree-sitter-language = "=0.1.7"
+# demo build (0.2.100).
+wasm-bindgen = "=0.2.100"
+wasm-bindgen-futures = "=0.4.50"
+topiary-core = "=0.6.1"
+topiary-tree-sitter-facade = "=0.6.1"
+topiary-web-tree-sitter-sys = { version = "=0.6.1", features = ["web-sys"] }
 
 [profile.release]
 opt-level = "s"

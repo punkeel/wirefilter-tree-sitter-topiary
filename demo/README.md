@@ -1,19 +1,19 @@
 # Browser demo
 
-The browser uses the same grammar, highlighting query, formatting query, and formatter goldens as the native tools. Topiary 0.8.0 is compiled to WebAssembly with the [documented compatibility patch](formatter/README.md).
+The browser uses the same grammar, highlighting query, formatting query, and formatter goldens as the native tools. The browser uses unmodified Topiary 0.6.1; the native crate uses 0.8.0. See the [version rationale](formatter/README.md).
 
-From the repository root, install the grammar and demo dependencies, Docker, the Rust WASM target, and the matching wasm-bindgen CLI:
+From the repository root, install the grammar and demo dependencies, Docker, Clang with WebAssembly support, the Rust WASM target, and the matching wasm-bindgen CLI:
 
 ```sh
 npm ci --prefix tree-sitter-wirefilter
 npm ci --prefix demo
 rustup target add wasm32-unknown-unknown
-cargo install wasm-bindgen-cli --version 0.2.126 --locked
+cargo install wasm-bindgen-cli --version 0.2.100 --locked
 npm run demo:build
 npm --prefix demo run dev
 ```
 
-The grammar build uses the pinned `emscripten/emsdk:4.0.15` Docker image. Docker must be running. The production build writes to the `demo/dist/` directory.
+The WASM build uses the pinned `emscripten/emsdk:4.0.15` Docker image. Docker must be running. The production build writes to the `demo/dist/` directory.
 
 For browser tests, install Chromium once, then run the suite:
 

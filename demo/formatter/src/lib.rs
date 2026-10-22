@@ -1,5 +1,5 @@
 #[cfg(target_arch = "wasm32")]
-use topiary_core::{formatter_str, Language, Operation, TopiaryQuery};
+use topiary_core::{formatter, Language, Operation, TopiaryQuery};
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
@@ -16,7 +16,12 @@ pub async fn initialize_topiary() -> Result<(), JsError> {
 /// Run the real Topiary engine with editable rules and space indentation.
 #[cfg(target_arch = "wasm32")]
 #[wasm_bindgen]
-pub fn format_wirefilter(source: &str, grammar: JsValue, query: &str, indent: usize) -> Result<String, JsError> {
+pub fn format_wirefilter(
+    source: &str,
+    grammar: JsValue,
+    query: &str,
+    indent: usize,
+) -> Result<String, JsError> {
     if !matches!(indent, 2 | 4 | 8) {
         return Err(JsError::new("Indentation must be 2, 4, or 8 spaces."));
     }
@@ -24,12 +29,21 @@ pub fn format_wirefilter(source: &str, grammar: JsValue, query: &str, indent: us
     let formatting_query = TopiaryQuery::new(&grammar, query)
         .map_err(|e| JsError::new(&format!("Invalid formatting query: {e:?}")))?;
     let language = Language {
-        name: "wirefilter".into(), grammar, formatting_query,
-        injection_query: None, indent: Some(" ".repeat(indent)),
+        name: "wirefilter".into(),
+        grammar,
+        query: formatting_query,
+        indent: Some(" ".repeat(indent)),
     };
     let mut output = Vec::new();
-    formatter_str(source, &mut output, &language, Operation::Format {
-        skip_idempotence: false, tolerate_parsing_errors: false, skip_stage: None,
-    }, None).map_err(|e| JsError::new(&format!("Formatting rules failed: {e:?}")))?;
+    formatter(
+        &mut source.as_bytes(),
+        &mut output,
+        &language,
+        Operation::Format {
+            skip_idempotence: false,
+            tolerate_parsing_errors: false,
+        },
+    )
+    .map_err(|e| JsError::new(&format!("Formatting rules failed: {e:?}")))?;
     String::from_utf8(output).map_err(|e| JsError::new(&e.to_string()))
 }
