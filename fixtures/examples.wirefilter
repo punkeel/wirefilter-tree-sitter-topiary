@@ -1,0 +1,1 @@
+(http.request.method eq "GET" and ip.src in {192.0.2.0/24 2001:db8::/32}) or not http.request.uri.path contains r#"/admin"#

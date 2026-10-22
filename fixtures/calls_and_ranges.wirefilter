@@ -1,0 +1,1 @@
+(len(http.request.uri.path) gt 20 and http.request.uri.path wildcard r##"*\"quoted\"*"##) and ip.src in {10.0.0.1..10.0.0.254 2001:db8::1..2001:db8::ff}

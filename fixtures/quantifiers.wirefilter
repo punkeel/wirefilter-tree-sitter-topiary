@@ -1,0 +1,1 @@
+any(http.request.headers["user-agent"][*] contains "bot") and not all(http.request.headers["x-role"][*] eq "guest")

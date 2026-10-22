@@ -1,0 +1,24 @@
+{
+  "name": "tree-sitter-wirefilter",
+  "version": "0.1.0",
+  "description": "Tree-sitter grammar for Cloudflare Wirefilter",
+  "private": true,
+  "license": "MIT",
+  "main": "grammar.js",
+  "scripts": {
+    "generate": "tree-sitter generate",
+    "build": "tree-sitter build -o wirefilter.so"
+  },
+  "tree-sitter": [
+    {
+      "scope": "source.wirefilter",
+      "file-types": [
+        "wirefilter",
+        "wf"
+      ]
+    }
+  ],
+  "devDependencies": {
+    "tree-sitter-cli": "^0.25.10"
+  }
+}

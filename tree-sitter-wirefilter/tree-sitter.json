@@ -1,0 +1,14 @@
+{
+  "grammars": [
+    {
+      "scope": "source.wirefilter",
+      "file-types": ["wirefilter", "wf"],
+      "highlights": "queries/highlights.scm"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "Tree-sitter grammar for Cloudflare Wirefilter expressions"
+  }
+}

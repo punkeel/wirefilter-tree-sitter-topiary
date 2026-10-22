@@ -1,0 +1,1 @@
+(tcp.flags & 0x02) xor (http.user_agent matches "(?i)bot" and http.host strict wildcard "*.example.com") or ip.src in $office_ips
